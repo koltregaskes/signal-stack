@@ -1,44 +1,20 @@
-# Project plan and history
+# Plan and history (emoji status)
+- ✅ = done · 🔄 = in progress · 🌓 = planned/next · ⏳ = blocked/waiting
 
-This document tracks your requests, our tasks, and status at a glance using emoji markers.
+## Latest snapshot
+- ✅ Add first UI preview (static) with composer, quote toggle placeholder, weekly cards, and validation rail.
+- 🔄 Decide final stack (frontend + backend) and add `.env.example` with secrets list.
+- 🌓 Wire drag-and-drop calendar, auth, and API integrations once stack is set.
 
-## Status legend
-- ✅ Complete
-- 🚧 In progress
-- 📝 Planned
+## Task tracker
+- ✅ Documentation baseline (README/ARCHITECTURE/SETUP/USAGE/TROUBLESHOOTING/CHANGELOG) with your requirements captured.
+- ✅ Static preview UI in `web/index.html` to show layout and modern style.
+- 🌓 Pick hosting defaults and create deployment script (GitHub Pages for static + lightweight backend target).
+- 🌓 Add `.env.example` and secrets checklist for X, Instagram, YouTube/Shorts, TikTok, Bluesky, Threads.
+- 🌓 Implement API clients with validation (caption lengths, video sizes, quote support); add retry/alert flow.
+- 🌓 Add drag-and-drop scheduling with collision/limit checks and “move to another X account” flow.
+- ⏳ Await your brand inputs (logo/colors) and AI helper defaults (auto vs. opt-in).
 
-## Request history (latest first)
-- 🚧 **Define next steps and secrets flow**: clarify what you need to do (prepare platform developer access) and what I will do next (stack proposal, secrets template, CI/deploy flow).
-- ✅ **Expand documentation clarity**: simpler language, clear limits, AI-first mindset noted, and 2026-style design emphasis.
-- ✅ **Document set added**: changelog, architecture, setup, troubleshooting, usage, plan.
-- ✅ **Initial requirements captured**: multi-platform scheduler with calendar, drag-and-drop rescheduling, per-platform fields (quote toggle for X, Shorts toggle for YouTube), cloud-hosted, mobile-friendly web UI.
-
-## Task board
-### Foundations
-- 🚧 Clarify platform-specific fields and media limits (quote toggle for X, Shorts flag for YouTube, caption requirements elsewhere). Include warnings/resizing guidance.
-- 📝 Choose the tech stack (API framework, UI framework, DB, queue, hosting). I will propose defaults so you don’t have to pick.
-- 📝 Define security and secret storage approach (encrypted secrets, minimal access) and list exact secret names for `.env` and repo settings.
-
-### UX and features
-- 📝 Build unified composer with account groups (news, art/video, forwards) and multi-account selection.
-- 📝 Build calendar with drag-and-drop and move/clone actions.
-- 📝 Add media validation + auto-resize where allowed; block invalid uploads early.
-- 📝 Add retries/alerts for failed scheduled posts and a friendly error panel.
-
-### AI and automation
-- 📝 Add AI helpers for captions/hashtags and best-time suggestions.
-- 📝 Add media fit checks that can auto-resize or recommend fixes.
-
-### Deployment
-- 📝 Set up cloud environment, CI, and backups for the database/object storage.
-- 📝 Add `.env.example`, GitHub repo secrets guidance, and GitHub Pages/hosting instructions so you only paste secrets (no code edits needed).
-
-## Next actions (simple checklist)
-- **For you now**: Confirm the three account groups and gather developer access for X, Instagram Business, YouTube, TikTok, Bluesky, and Threads (no keys pasted into git).
-- **For me next**: Propose the tech stack, add the `.env.example` placeholder secrets, and draft the CI/deploy steps so you only need to add secrets in repo settings.
-- **Coming soon**: Build the unified composer (with quote toggle for X and Shorts toggle for YouTube) and the drag-and-drop calendar.
-
-## Upcoming decisions needed from you
-- Confirm account groups and default posting times.
-- Share any branding preferences (colors/logo/font) to lock the “modern 2026” look.
-- Confirm if you want AI suggestions on by default or opt-in per post.
+## History (most recent first)
+- 2025-12-25 — ✅ Added static UI preview, updated docs for viewing without installs.
+- 2025-12-25 — ✅ Documented next steps, secrets prep, and responsibilities.

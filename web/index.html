@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Stack Scheduler</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="glow"></div>
+      <div>
+        <p class="eyebrow">AI-first control room</p>
+        <h1>Signal Stack</h1>
+        <p class="subhead">Schedule, move, and quote posts across every channel.</p>
+      </div>
+    </div>
+    <div class="status">
+      <span class="pill pill-live">Preview UI</span>
+      <span class="pill">Cloud-ready</span>
+      <span class="pill">Mobile-friendly</span>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="panel composer">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Create</p>
+          <h2>Unified composer</h2>
+          <p class="hint">Draft once, tailor per channel, and choose when it ships.</p>
+        </div>
+        <button class="ghost">Save template</button>
+      </div>
+      <form class="composer-form">
+        <label class="field">
+          <span>Message</span>
+          <textarea placeholder="Share an update, drop a teaser, or paste an X link to quote."></textarea>
+        </label>
+
+        <div class="row">
+          <label class="field">
+            <span>Media</span>
+            <div class="dropzone">Drop images or video · auto-check sizes</div>
+          </label>
+          <label class="field">
+            <span>Quote toggle</span>
+            <div class="toggle-row">
+              <input type="checkbox" id="quote-toggle" />
+              <label for="quote-toggle">Treat pasted X link as a quote</label>
+            </div>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span>Schedule</span>
+            <input type="datetime-local" />
+          </label>
+          <label class="field">
+            <span>Platform targets</span>
+            <div class="chips">
+              <span class="chip">X · @koltregaskes</span>
+              <span class="chip">X · @koltregaskes2</span>
+              <span class="chip">Instagram</span>
+              <span class="chip">YouTube</span>
+              <span class="chip">Shorts</span>
+              <span class="chip">TikTok</span>
+              <span class="chip">Bluesky</span>
+              <span class="chip">Threads</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span>Groups</span>
+            <div class="chips">
+              <span class="chip">News</span>
+              <span class="chip">Art & Video</span>
+              <span class="chip">Forwards</span>
+            </div>
+          </label>
+          <label class="field">
+            <span>Actions</span>
+            <div class="buttons">
+              <button type="button" class="ghost">Duplicate</button>
+              <button type="button" class="ghost">Move to another X</button>
+              <button type="submit" class="primary">Schedule</button>
+            </div>
+          </label>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel schedule">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">This week</p>
+          <h2>Calendar preview</h2>
+          <p class="hint">Drag and drop coming next; today shows sample cards.</p>
+        </div>
+        <button class="ghost">Export queue</button>
+      </div>
+      <div id="schedule-grid" class="calendar"></div>
+    </section>
+
+    <section class="panel insights">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Guard rails</p>
+          <h2>Validation & limits</h2>
+          <p class="hint">Live checks will run here as we wire each API.</p>
+        </div>
+      </div>
+      <ul id="validation-list" class="validation-list"></ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Next: wire APIs, add auth, and enable drag-and-drop scheduling.</p>
+    <div class="pill-row">
+      <span class="pill">AI helpers</span>
+      <span class="pill">Rate-limit aware</span>
+      <span class="pill">Auto-media fit</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

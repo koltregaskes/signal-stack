@@ -1,18 +1,13 @@
 # Troubleshooting
 
-The product is not implemented yet. This guide lists likely issues to watch for once code is in place. Everything is kept simple and non-technical.
+## I don’t see styles or cards
+- Make sure you opened `web/index.html` directly in your browser (double-click or drag into a tab). No build step is needed.
 
-## Common setup issues
-- **Missing environment variables**: Make sure platform API keys, database URLs, and storage credentials are set in `.env`. Keep `.env` out of git.
-- **OAuth callback errors**: Confirm redirect URLs in each platform’s developer settings match the app’s URLs exactly.
-- **Media upload failures**: Check file size, duration, and aspect ratios match platform limits. Ensure storage credentials are correct.
-- **Time zone mismatch**: Verify your profile time zone is set correctly so scheduled times land where you expect.
+## npm install failed
+- Some environments block npm registry access (403 errors). The current preview does **not** need npm installs because it is plain HTML/CSS/JS. When we add the backend and build tooling, we’ll provide exact commands and fallbacks.
 
-## Scheduling and publishing issues
-- **Post stuck in queue**: Confirm the worker/queue service is running and can reach Redis.
-- **Rate limits**: Platforms may throttle requests. The app will retry with backoff; if it still fails, spread out posts or reduce simultaneous uploads.
-- **Clock drift/time zones**: Ensure server time is synced (NTP) and your profile time zone is correct.
-- **Media rejected mid-publish**: If a platform rejects media, the UI will show the reason (size, length, format). Fix and retry; the draft is kept.
+## Something looks off on mobile
+- Refresh the page once; the layout is responsive. If text feels small, pinch-zoom and note which device you use so we can fine-tune breakpoints.
 
-## Getting help
-If you hit an issue not listed here, capture the error message and recent actions taken so we can expand this guide.
+## I don’t know which secrets to add
+- None are required yet. When API wiring begins, we’ll ship a `.env.example` file and a short checklist so you can copy/paste into GitHub Secrets.

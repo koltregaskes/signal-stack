@@ -1,42 +1,20 @@
-# Setup guide
+# Setup (simple for now)
 
-This project is currently documentation-only while we define requirements. This guide explains how setup will work once code is in place, using plain language.
+You can already view the UI preview locally:
 
-## Prerequisites (what you will need)
-- Node.js and npm (for the web UI and API) — exact versions TBD.
-- Postgres and Redis services (prefer managed cloud so you don’t run servers yourself).
-- Cloud object storage (e.g., S3-compatible) for media caching and backups.
-- Developer apps/keys for X, Instagram (Business), YouTube, TikTok, Bluesky, and Threads.
+1. Download or clone the repo.
+2. Open `web/index.html` in your browser (double-click or drag into a tab). The page is responsive and uses no build tools.
+3. When APIs are added, we’ll introduce environment variables in a `.env.example` file and a small local server so you never handle low-level config.
 
-## Environment configuration (to be finalized)
-- App secrets and API keys live in environment variables (e.g., `.env`) and stay out of git.
-- Each platform needs a callback URL for OAuth. We will list exact URLs once routes are set.
-- Storage buckets hold uploads and any resized/transcoded copies.
-- Redis keeps the job queue and rate-limit counters.
+## Hosting plan (plain language)
+- **Cloud-first**: Code will deploy automatically from GitHub once the backend exists. For now, GitHub Pages can serve the static preview.
+- **Secrets**: API keys and app secrets will live in repository/environment secrets (not in git). I will list exact names when we connect each platform.
+- **Storage**: Media will use a bucket (e.g., S3-compatible). Until then, the preview uses sample data only.
 
-### Secrets you will add later (names will be provided)
-- Database URL, Redis URL, and storage bucket credentials.
-- Platform API credentials for X, Instagram Business, YouTube, TikTok, Bluesky, Threads.
-- App credentials for the web UI/backend (e.g., session keys, encryption key for stored tokens).
+## What you can prepare
+- Make sure you have or can request developer access for: X, Instagram Business, YouTube, TikTok, Bluesky, and Threads.
+- Confirm where you want to host (GitHub Pages for static + a small backend on something like Fly.io/Render/Vercel). I will propose defaults; you just approve.
+- Gather any brand assets (logo, colors) so we can skin the UI quickly.
 
-I will supply exact variable names (e.g., `X_CLIENT_ID`, `YOUTUBE_API_KEY`, `SESSION_SECRET`) and a `.env.example` so you can copy/paste into repo secrets without editing code.
-
-## Expected local steps (once code exists)
-1. Clone the repo.
-2. Install dependencies: `npm install` (or the package manager we standardize on).
-3. Copy `.env.example` to `.env` and fill in platform credentials and database/storage URLs.
-4. Run database migrations and start services (API, workers, and web UI).
-5. Open the web app and complete the OAuth connections for each platform.
-
-## Cloud deployment
-- Start with one cloud environment (e.g., Fly.io, Render, or similar) using managed Postgres/Redis.
-- Use CI to run tests and deploy when changes land on the main branch.
-- Enable HTTPS, custom domain, and environment-specific secrets.
-- Set up daily backups for the database and storage bucket.
-
-## What you can do now
-- Make sure you can access developer portals for each platform (X, Instagram Business via Facebook developer console, YouTube, TikTok, Bluesky, Threads). We will create apps/keys there when code is ready.
-- Decide which GitHub repo you want to store secrets in (Settings → Secrets and variables). Nothing to add yet; a checklist will follow.
-- Keep using GitHub Pages for docs; once the app exists, we’ll add CI to deploy the real UI to your chosen host.
-
-As we implement the stack, this document will be updated with concrete commands and versions.
+## When errors happen
+If you see missing styles or scripts, confirm you opened `web/index.html` directly. If npm installs fail in your environment, the preview still works because it uses plain HTML/CSS/JS.

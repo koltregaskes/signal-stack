@@ -1,14 +1,8 @@
 # Changelog
 
-## Unreleased
-- Added clearer next steps, secrets/CI expectations, and user checklists before code lands.
-- Pending: first code drop (backend, UI, queues) and platform integrations.
+## 2025-12-25
+- Added static UI preview (composer, quote toggle placeholder, calendar cards, validation rail) in `web/index.html`.
+- Updated docs (README, SETUP, USAGE, TROUBLESHOOTING, PLAN) to explain how to view the preview and what comes next.
 
-## 0.0.2 - 2025-02-04
-- Clarified documents in plain language and added AI-first/automation notes.
-- Expanded platform limits and UI toggles (X quotes, YouTube Shorts) in the architecture and usage docs.
-- Improved plan/status tracking with emoji markers and decision prompts.
-
-## 0.0.1 - 2025-02-03
-- Added project documentation set (architecture, setup, troubleshooting, usage, and planning).
-- Captured initial roadmap and feature intent for the Buffer replacement project.
+## 2025-12-24
+- Documented next steps, secrets prep, and responsibilities (pre-code).

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Added clearer next steps, secrets/CI expectations, and user checklists before code lands.
 - Pending: first code drop (backend, UI, queues) and platform integrations.
 
 ## 0.0.2 - 2025-02-04

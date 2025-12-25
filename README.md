@@ -30,6 +30,13 @@ This repo explains a simple, cloud-hosted alternative to Buffer. The goal: let y
 - Final account groups (news, art/video, forwards) and any default posting times.
 - Per-platform defaults (e.g., Shorts in the morning, full videos in the evening).
 - Branding/style hints (colors, logo, font vibes). We’re aiming for a “modern 2026” look: clean, airy, high-contrast, and keyboard-friendly.
+- A quick ✅/❌ on using AI helpers by default (captions/hashtags/best times) or keeping them opt-in.
+
+## What happens next (and what you can do now)
+- **Right now**: No code is deployed yet—this GitHub Pages site just shows the docs. I will finalize the stack choice next so you do not have to decide tools.
+- **Your part**: Gather platform developer access (X, Instagram Business, YouTube, TikTok, Bluesky, Threads) so we can create API keys later. Do not paste keys into git; we’ll use secrets.
+- **Upcoming for you**: When code lands, you will add secrets (API keys, database/storage URLs) to the repo settings. I will provide exact names and copy/paste values when we reach that step.
+- **Upcoming for me**: Propose the tech stack, add `.env.example` with placeholder secrets, and wire CI so deployments happen automatically once code exists.
 
 ## Next steps (simple plan)
 1. Pick the exact tech stack (framework, database, hosting). I’ll propose defaults so you don’t have to decide.

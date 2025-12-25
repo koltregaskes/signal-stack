@@ -9,6 +9,7 @@ This repo tracks a simple, cloud-hosted alternative to Buffer. The goal: let you
 - [Troubleshooting](TROUBLESHOOTING.md) — simple fixes for common issues
 - [Project plan and history](PLAN.md) — your requests, tasks, and status emojis
 - [Changelog](CHANGELOG.md) — dated record of changes
+- [Costs](COSTS.md) — what might cost money (APIs, hosting) with call estimates
 - [UI preview](web/index.html) — open locally or via GitHub Pages to see the design
 
 ## How to get started (dummy-proof)

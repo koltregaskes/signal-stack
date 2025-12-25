@@ -4,12 +4,15 @@ This repo tracks a simple, cloud-hosted alternative to Buffer. The goal: let you
 
 ## Quick links (start here)
 - [Architecture overview](ARCHITECTURE.md) — what pieces exist and why they matter
+- [Accessibility](ACCESSIBILITY.md) — WCAG 2.2 AA targets and how to check them
 - [Setup guide](SETUP.md) — how the app will be hosted and configured
 - [Usage](USAGE.md) — how you will schedule, move, and post once built
 - [Troubleshooting](TROUBLESHOOTING.md) — simple fixes for common issues
 - [Project plan and history](PLAN.md) — your requests, tasks, and status emojis
 - [Changelog](CHANGELOG.md) — dated record of changes
 - [Costs](COSTS.md) — what might cost money (APIs, hosting) with call estimates
+- [AI helper onboarding (llms.txt)](llms.txt) — quick agent guide and commands
+- [Agent instructions](AGENTS.md) — how to work in this repo
 - [UI preview](web/index.html) — open locally or via GitHub Pages to see the design
 
 ## How to get started (dummy-proof)

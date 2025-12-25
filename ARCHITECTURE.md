@@ -21,3 +21,7 @@
 ## Deployment vision
 - **Static preview**: Served via GitHub Pages now.
 - **App**: CI/CD to push backend + built frontend to a managed host (e.g., Render/Fly/Vercel). Health checks, logs, and alerting once API calls go live.
+
+## Accessibility baseline
+- Target **WCAG 2.2 AA** with semantic HTML, labelled controls, visible focus, and clear validation messaging.
+- Add automated spot checks with `npx pa11y web/index.html` and manual keyboard/screen-reader passes. See `ACCESSIBILITY.md` for the checklist.

@@ -1,0 +1,35 @@
+Buffer Replacement — AI-ready guide
+
+Goal
+Build a cloud-first Buffer-style scheduler for X, Instagram, YouTube/Shorts, TikTok, Bluesky, and Threads with a modern accessible UI, scheduling, and media validation.
+
+Key files (start here)
+- README.md — project overview and dummy-proof getting started.
+- ARCHITECTURE.md — components, data flow, platform notes.
+- ACCESSIBILITY.md — WCAG 2.2 AA targets and how to check them.
+- SETUP.md — environment expectations and upcoming secrets.
+- USAGE.md — how the UI is meant to work once wired.
+- TROUBLESHOOTING.md — quick fixes for common issues.
+- PLAN.md — tasks with emoji status and history of requests.
+- CHANGELOG.md — dated record of changes.
+- COSTS.md — API/hosting estimates, limits, and savings tips.
+- web/index.html — current static preview; CSS/JS live alongside.
+
+Common tasks
+- Open the UI preview locally: `cd buffer-replacement && start web/index.html` on Windows or `open web/index.html` on macOS.
+- Run a quick accessibility scan on the static page: `cd buffer-replacement && npx pa11y web/index.html` (installs on demand).
+- Update docs together when functionality changes; reflect user-facing impacts in README, USAGE, and PLAN.
+
+Architecture highlights
+- Frontend: static preview today; planned React/Next or similar SPA with accessible components and drag-and-drop scheduling.
+- Backend (planned): API layer handling auth, scheduling, media upload/validation, and retries. Worker queue for publish attempts.
+- Storage (planned): Postgres for data, Redis/queue for jobs, S3-compatible storage for cached media.
+- Security: secrets in environment variables; no keys in git. `.env.example` will list names once defined.
+
+Accessibility baseline
+- Target WCAG 2.2 AA; semantic HTML, labelled inputs, focus styles, keyboard support.
+- Automated spot-check: `cd buffer-replacement && npx pa11y web/index.html`.
+
+Notes for LLM/agent use
+- Keep responses concise and in plain UK English.
+- Cite files/commands where required and keep updates small and reviewable.

@@ -3,129 +3,273 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Signal Stack Scheduler</title>
+  <title>Signal Stack</title>
+  <meta
+    name="description"
+    content="Signal Stack is an offline-first creator scheduler for Instagram, TikTok, YouTube, and Shorts."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="app-header">
+  <div class="background" aria-hidden="true">
+    <div class="background__glow background__glow--amber"></div>
+    <div class="background__glow background__glow--mint"></div>
+    <div class="background__grid"></div>
+  </div>
+
+  <header class="topbar">
     <div class="brand">
-      <div class="glow"></div>
+      <div class="brand__mark">SS</div>
       <div>
-        <p class="eyebrow">AI-first control room</p>
+        <p class="eyebrow">Creator Scheduling Studio</p>
         <h1>Signal Stack</h1>
-        <p class="subhead">Schedule, move, and quote posts across every channel.</p>
+        <p class="subhead">A sharper local workflow for Instagram, TikTok, YouTube, and Shorts.</p>
       </div>
     </div>
-    <div class="status">
-      <span class="pill pill-live">Preview UI</span>
-      <span class="pill">Cloud-ready</span>
-      <span class="pill">Mobile-friendly</span>
+
+    <div class="topbar__actions">
+      <div class="status-cluster">
+        <span class="status-pill status-pill--live">Offline-first</span>
+        <span class="status-pill">Local save</span>
+        <span class="status-pill">API-ready later</span>
+      </div>
+      <button id="exportQueueBtn" class="button button--ghost" type="button">Export Queue</button>
     </div>
   </header>
 
-  <main class="grid">
-    <section class="panel composer">
+  <main class="workspace">
+    <section class="hero-panel panel">
+      <div>
+        <p class="eyebrow">Why this exists</p>
+        <h2>Typefully-style flow, but for visual publishing.</h2>
+      </div>
+      <div class="hero-panel__facts">
+        <article>
+          <span>Instagram</span>
+          <strong>Carousels, reels, static drops</strong>
+        </article>
+        <article>
+          <span>TikTok</span>
+          <strong>Quick clip pipeline and duration checks</strong>
+        </article>
+        <article>
+          <span>YouTube</span>
+          <strong>Long-form posts plus Shorts planning</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="composer panel">
       <div class="panel-head">
         <div>
-          <p class="eyebrow">Create</p>
-          <h2>Unified composer</h2>
-          <p class="hint">Draft once, tailor per channel, and choose when it ships.</p>
+          <p class="eyebrow">Composer</p>
+          <h2>Build a post once, tailor it per platform.</h2>
+          <p class="hint">Everything here saves locally, so you can shape a queue before any real API connection exists.</p>
         </div>
-        <button class="ghost">Save template</button>
+        <div class="panel-head__actions">
+          <button id="saveDraftBtn" class="button button--ghost" type="button">Save Draft</button>
+          <button id="resetComposerBtn" class="button button--ghost" type="button">Reset</button>
+        </div>
       </div>
-      <form class="composer-form">
+
+      <div class="template-strip">
+        <button class="template-card" type="button" data-template="reel-teaser">
+          <span class="template-card__label">Template</span>
+          <strong>Reel teaser</strong>
+          <small>Instagram + TikTok + Shorts</small>
+        </button>
+        <button class="template-card" type="button" data-template="youtube-drop">
+          <span class="template-card__label">Template</span>
+          <strong>YouTube drop</strong>
+          <small>Long-form plus Shorts support</small>
+        </button>
+        <button class="template-card" type="button" data-template="trailer-pulse">
+          <span class="template-card__label">Template</span>
+          <strong>Trailer pulse</strong>
+          <small>One-day campaign burst</small>
+        </button>
+      </div>
+
+      <form id="composerForm" class="composer-form">
+        <div class="field-row field-row--wide">
+          <label class="field">
+            <span class="field__label">Title</span>
+            <input id="titleInput" class="field__control" type="text" placeholder="Midjourney teaser batch 12" required />
+          </label>
+          <label class="field">
+            <span class="field__label">Schedule</span>
+            <input id="scheduleInput" class="field__control" type="datetime-local" required />
+          </label>
+        </div>
+
         <label class="field">
-          <span>Message</span>
-          <textarea placeholder="Share an update, drop a teaser, or paste an X link to quote."></textarea>
+          <span class="field__label">Caption / hook</span>
+          <textarea id="captionInput" class="field__control field__control--textarea" placeholder="Write the post once, then adjust it later per channel."></textarea>
+          <div class="field__meta">
+            <span id="captionCount">0 characters</span>
+            <span>Local draft text only</span>
+          </div>
         </label>
 
-        <div class="row">
+        <div class="field-row">
+          <fieldset class="field field--platforms">
+            <legend class="field__label">Platform targets</legend>
+            <div id="platformOptions" class="platform-grid"></div>
+          </fieldset>
+
+          <div class="stack">
+            <label class="field">
+              <span class="field__label">Content group</span>
+              <select id="groupInput" class="field__control">
+                <option value="Art Drop">Art Drop</option>
+                <option value="Video Push">Video Push</option>
+                <option value="Launch Beat">Launch Beat</option>
+                <option value="Community Pulse">Community Pulse</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Status</span>
+              <select id="statusInput" class="field__control">
+                <option value="scheduled">Scheduled</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-row">
           <label class="field">
-            <span>Media</span>
-            <div class="dropzone">Drop images or video - auto-check sizes</div>
+            <span class="field__label">Media type</span>
+            <select id="mediaTypeInput" class="field__control">
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+              <option value="carousel">Carousel</option>
+              <option value="mixed">Mixed</option>
+            </select>
           </label>
+
           <label class="field">
-            <span>Quote toggle</span>
-            <div class="toggle-row">
-              <input type="checkbox" id="quote-toggle" />
-              <label for="quote-toggle">Treat pasted X link as a quote</label>
-            </div>
+            <span class="field__label">Aspect ratio</span>
+            <select id="ratioInput" class="field__control">
+              <option value="9:16">9:16</option>
+              <option value="4:5">4:5</option>
+              <option value="1:1">1:1</option>
+              <option value="16:9">16:9</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Duration (seconds)</span>
+            <input id="durationInput" class="field__control" type="number" min="0" value="30" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Media items</span>
+            <input id="mediaCountInput" class="field__control" type="number" min="1" value="1" />
           </label>
         </div>
 
-        <div class="row">
+        <div class="field-row">
           <label class="field">
-            <span>Schedule</span>
-            <input type="datetime-local" />
+            <span class="field__label">Source / quote URL</span>
+            <input id="sourceUrlInput" class="field__control" type="url" placeholder="https://x.com/... or source link" />
           </label>
-          <label class="field">
-            <span>Platform targets</span>
-            <div class="chips">
-              <span class="chip">X - @koltregaskes</span>
-              <span class="chip">X - @koltregaskes2</span>
-              <span class="chip">Instagram</span>
-              <span class="chip">YouTube</span>
-              <span class="chip">Shorts</span>
-              <span class="chip">TikTok</span>
-              <span class="chip">Bluesky</span>
-              <span class="chip">Threads</span>
-            </div>
+
+          <label class="field field--toggle">
+            <span class="field__label">Quote mode</span>
+            <span class="toggle">
+              <input id="quoteToggle" type="checkbox" />
+              <span class="toggle__visual"></span>
+              <span class="toggle__copy">Treat source URL as a quote or reference post</span>
+            </span>
           </label>
         </div>
 
-        <div class="row">
-          <label class="field">
-            <span>Groups</span>
-            <div class="chips">
-              <span class="chip">News</span>
-              <span class="chip">Art & Video</span>
-              <span class="chip">Forwards</span>
-            </div>
-          </label>
-          <label class="field">
-            <span>Actions</span>
-            <div class="buttons">
-              <button type="button" class="ghost">Duplicate</button>
-              <button type="button" class="ghost">Move to another X</button>
-              <button type="submit" class="primary">Schedule</button>
-            </div>
-          </label>
+        <label class="field">
+          <span class="field__label">Notes</span>
+          <textarea id="notesInput" class="field__control field__control--notes" placeholder="Anything to remember: asset folder, thumbnail plan, alternate hook, AI caption idea."></textarea>
+        </label>
+
+        <div class="composer-actions">
+          <button id="scheduleBtn" class="button button--primary" type="submit">Save To Queue</button>
+          <button id="duplicateComposerBtn" class="button button--ghost" type="button">Duplicate Current</button>
         </div>
       </form>
     </section>
 
-    <section class="panel schedule">
+    <section class="queue panel">
       <div class="panel-head">
         <div>
-          <p class="eyebrow">This week</p>
-          <h2>Calendar preview</h2>
-          <p class="hint">Drag and drop coming next; today shows sample cards.</p>
+          <p class="eyebrow">Queue</p>
+          <h2>Everything scheduled, draft, or already published.</h2>
         </div>
-        <button class="ghost">Export queue</button>
+        <div class="queue-toolbar">
+          <input id="searchInput" class="field__control field__control--search" type="search" placeholder="Search queue..." />
+          <div id="filterTabs" class="filter-tabs"></div>
+        </div>
       </div>
-      <div id="schedule-grid" class="calendar"></div>
+      <div id="queueList" class="queue-list"></div>
     </section>
 
-    <section class="panel insights">
+    <section class="calendar panel">
       <div class="panel-head">
         <div>
-          <p class="eyebrow">Guard rails</p>
-          <h2>Validation & limits</h2>
-          <p class="hint">Live checks will run here as we wire each API.</p>
+          <p class="eyebrow">Weekly view</p>
+          <h2>Spot collisions and empty posting lanes.</h2>
+          <p class="hint">Cards are grouped by upcoming weekday so you can see pressure points at a glance.</p>
         </div>
       </div>
-      <ul id="validation-list" class="validation-list"></ul>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </section>
+
+    <section class="intel panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Checks</p>
+          <h2>Validation rail and launch totals.</h2>
+        </div>
+      </div>
+      <div class="intel-grid">
+        <div class="intel-card">
+          <p class="intel-card__label">Composer validation</p>
+          <ul id="validationList" class="validation-list"></ul>
+        </div>
+        <div class="intel-card">
+          <p class="intel-card__label">Queue summary</p>
+          <div id="insightStats" class="stats-grid"></div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <p>Next: wire APIs, add auth, and enable drag-and-drop scheduling.</p>
-    <div class="pill-row">
-      <span class="pill">AI helpers</span>
-      <span class="pill">Rate-limit aware</span>
-      <span class="pill">Auto-media fit</span>
-    </div>
-  </footer>
+  <template id="queueCardTemplate">
+    <article class="queue-card">
+      <div class="queue-card__top">
+        <div>
+          <span class="queue-card__status"></span>
+          <h3 class="queue-card__title"></h3>
+        </div>
+        <span class="queue-card__time"></span>
+      </div>
+      <p class="queue-card__caption"></p>
+      <div class="queue-card__meta"></div>
+      <div class="queue-card__platforms"></div>
+      <div class="queue-card__actions">
+        <button class="button button--ghost action-load" type="button">Load</button>
+        <button class="button button--ghost action-duplicate" type="button">Duplicate</button>
+        <button class="button button--ghost action-toggle" type="button">Toggle Status</button>
+        <button class="button button--ghost action-delete" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
 
   <script src="app.js"></script>
 </body>

@@ -27,7 +27,7 @@ This is not meant to replace your text-based workflow. It is specifically aimed 
 - Gives you a reusable composer for Instagram, TikTok, YouTube, and Shorts
 - Shows a weekly calendar view grouped by day
 - Runs live validation for ratio, duration, caption length, and quote-link basics
-- Includes reusable templates and JSON queue export
+- Includes reusable templates plus JSON queue export and import
 
 ## What Is Still Missing
 - Real authentication and platform API connections

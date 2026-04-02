@@ -157,6 +157,8 @@ const dom = {
   saveDraftBtn: document.getElementById('saveDraftBtn'),
   resetComposerBtn: document.getElementById('resetComposerBtn'),
   duplicateComposerBtn: document.getElementById('duplicateComposerBtn'),
+  importQueueBtn: document.getElementById('importQueueBtn'),
+  importQueueInput: document.getElementById('importQueueInput'),
   exportQueueBtn: document.getElementById('exportQueueBtn'),
   queueList: document.getElementById('queueList'),
   calendarGrid: document.getElementById('calendarGrid'),
@@ -182,6 +184,22 @@ function attachEvents() {
   dom.saveDraftBtn.addEventListener('click', () => saveComposer('draft'));
   dom.resetComposerBtn.addEventListener('click', resetComposer);
   dom.duplicateComposerBtn.addEventListener('click', duplicateComposer);
+  dom.importQueueBtn.addEventListener('click', () => dom.importQueueInput.click());
+  dom.importQueueInput.addEventListener('change', (event) => {
+    const [file] = event.target.files || [];
+    if (!file) {
+      return;
+    }
+
+    importQueue(file)
+      .catch((error) => {
+        console.error('Queue import failed:', error);
+        window.alert('That queue file could not be imported.');
+      })
+      .finally(() => {
+        dom.importQueueInput.value = '';
+      });
+  });
   dom.exportQueueBtn.addEventListener('click', exportQueue);
   dom.searchInput.addEventListener('input', (event) => {
     state.search = event.target.value.trim().toLowerCase();
@@ -485,6 +503,28 @@ function exportQueue() {
   showBanner('Queue exported.');
 }
 
+async function importQueue(file) {
+  const text = await file.text();
+  const parsed = JSON.parse(text);
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Queue file must contain an array of posts.');
+  }
+
+  const importedPosts = parsed.map(normaliseImportedPost).filter(Boolean);
+  if (!importedPosts.length) {
+    throw new Error('Queue file did not contain any usable posts.');
+  }
+
+  state.posts = importedPosts;
+  state.activePostId = importedPosts[0].id;
+  sortPosts();
+  persistPosts();
+  setComposerFromPost(importedPosts[0]);
+  render();
+  showBanner(`Imported ${importedPosts.length} queue item${importedPosts.length === 1 ? '' : 's'}.`);
+}
+
 function collectComposerValues() {
   const selectedPlatforms = Array.from(dom.platformOptions.querySelectorAll('input:checked')).map((input) => input.value);
 
@@ -617,6 +657,34 @@ function loadPosts() {
 
 function persistPosts() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.posts));
+}
+
+function normaliseImportedPost(post) {
+  if (!post || typeof post !== 'object') {
+    return null;
+  }
+
+  const availablePlatforms = Array.isArray(post.platforms)
+    ? post.platforms.filter((platform) => platformCatalog[platform])
+    : [];
+
+  return {
+    id: typeof post.id === 'string' && post.id ? post.id : crypto.randomUUID(),
+    title: typeof post.title === 'string' ? post.title.trim() : '',
+    caption: typeof post.caption === 'string' ? post.caption.trim() : '',
+    scheduleAt: normaliseDateInput(post.scheduleAt || buildFutureDate(1, 10, 0)),
+    platforms: availablePlatforms.length ? availablePlatforms : ['instagram'],
+    group: typeof post.group === 'string' && post.group ? post.group : 'Art Drop',
+    mediaType: ['image', 'video', 'carousel', 'mixed'].includes(post.mediaType) ? post.mediaType : 'image',
+    ratio: typeof post.ratio === 'string' && post.ratio ? post.ratio : '9:16',
+    duration: Number(post.duration || 0),
+    mediaCount: Math.max(1, Number(post.mediaCount || 1)),
+    sourceUrl: typeof post.sourceUrl === 'string' ? post.sourceUrl.trim() : '',
+    quoteMode: Boolean(post.quoteMode),
+    notes: typeof post.notes === 'string' ? post.notes.trim() : '',
+    status: FILTERS.includes(post.status) && post.status !== 'all' ? post.status : 'scheduled',
+    createdAt: typeof post.createdAt === 'string' && post.createdAt ? post.createdAt : new Date().toISOString()
+  };
 }
 
 function sortPosts() {

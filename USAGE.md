@@ -7,6 +7,7 @@
 5. Load queue items back into the composer to edit or duplicate them.
 6. Watch the validation rail for format and platform-fit warnings.
 7. Export the queue as JSON when you want a backup or handoff.
+8. Import a previously exported queue when you want to pick up an old planning session.
 
 ## Current scope
 - This is a real local scheduler, but not a live publisher yet.

@@ -696,6 +696,16 @@ h1 {
   transform: translateY(0);
 }
 
+.site-footer {
+  width: min(calc(100% - 36px), 1440px);
+  margin: 0 auto 28px;
+  text-align: center;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 246, 0.58);
+}
+
 button,
 .queue-card,
 .calendar-card,

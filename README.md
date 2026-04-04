@@ -9,7 +9,6 @@ This is not meant to replace your text-based workflow. It is specifically aimed 
 - [Setup guide](SETUP.md)
 - [Usage notes](USAGE.md)
 - [Troubleshooting](TROUBLESHOOTING.md)
-- [Project plan](PLAN.md)
 - [Changelog](CHANGELOG.md)
 - [UI preview](web/index.html)
 

@@ -1,0 +1,17 @@
+# Local planning and working notes
+PLAN.md
+TODO.local.md
+TASKS.local.md
+*.local.md
+notes-local/
+planning-local/
+.local-notes/
+
+# Local scratch files
+*.tmp
+*.bak
+*.backup
+
+# OS
+.DS_Store
+Thumbs.db

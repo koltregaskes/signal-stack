@@ -8,3 +8,4 @@ Read `W:\Repos\_My Tools\AGENTS.md` first.
 - Keep dry-run, validation, and connector readiness honest.
 - Prefer local-first workflows and explicit platform constraints over vague automation claims.
 - Read `README.md`, `ARCHITECTURE.md`, `SETUP.md`, and `TROUBLESHOOTING.md` before major changes.
+- Keep `TOOLS-MANAGER-STATUS.md` current after meaningful work. It is the canonical repo-root handoff/status file for the Tools Manager.

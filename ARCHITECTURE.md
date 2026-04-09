@@ -1,23 +1,88 @@
-# Architecture (current state + next steps)
+# Architecture
 
-## Today (preview-only)
-- **Static UI**: `web/index.html` + `styles.css` + `app.js` show the planned experience (composer, platform chips, quote toggle, weekly cards, validation rail). No build tools or backend yet.
-- **Why static first**: Lets you see and share the design now, works on GitHub Pages, and avoids npm install issues until we add API code.
+## Stack choice
 
-## Near-term build plan
-- **Frontend**: Keep the current layout, then add interactivity (drag-and-drop calendar, per-platform validation) with a lightweight framework once dependency access is confirmed. Responsive and touch-friendly from the start.
-- **Backend**: Add a small API (likely Node/Express or FastAPI) for auth, scheduling, media validation, and platform posting. Queue worker for retries.
-- **Storage**: Postgres for schedules/posts, Redis for queues, object storage for media. Until then, UI uses sample data only.
-- **Secrets & config**: Will live in `.env.example` and deployment secrets. No secrets are required yet.
-- **AI helpers**: Slots for caption/hashtag suggestions and “best time” hints; wired after core posting works.
+- **Frontend**: zero-build HTML/CSS/ES modules in `web/`
+- **Shared logic**: platform rules, time helpers, and validation in `shared/`
+- **Backend**: dependency-light Node server in `server.mjs` plus `server/`
+- **Persistence**: local JSON state in `.local/data/app-state.json`
+- **Uploads**: local media files in `.local/uploads/`
+- **Offline shell**: service worker caches the app shell for fast local reloads
 
-## Platform limits to keep in mind
-- **X (Twitter)**: Quote posts require valid tweet IDs and media rules; API quotas apply per app. We’ll surface any API errors clearly.
-- **Instagram (Business)**: Publishing requires Business/Creator accounts and app review. Media size/time limits must be validated.
-- **YouTube vs. Shorts**: Shorts benefit from under-60s vertical videos; standard uploads support `publishAt` for scheduling.
-- **TikTok**: Video size/duration caps and category approvals can apply.
-- **Bluesky/Threads**: Posting is available; scheduling relies on our clock. Media limits will be enforced in the UI.
+This keeps the product easy to run, easy to ship, and easy to inspect without introducing a framework tax too early.
 
-## Deployment vision
-- **Static preview**: Served via GitHub Pages now.
-- **App**: CI/CD to push backend + built frontend to a managed host (e.g., Render/Fly/Vercel). Health checks, logs, and alerting once API calls go live.
+## Runtime model
+
+1. `server.mjs` serves the static frontend and the JSON API.
+2. The frontend loads `/api/bootstrap` for posts, accounts, alerts, and runtime config.
+3. Composer saves posts back to `/api/posts`.
+4. Composer drafts also autosave locally in browser storage.
+5. Media uploads go to `/api/uploads` and are stored locally.
+6. A scheduler loop checks due items every 30 seconds.
+7. Dry-run accounts publish immediately as simulated deliveries.
+8. Live API accounts require platform secrets before they can run.
+
+## Pipeline model
+
+Each item moves through a shared pipeline:
+
+- `idea`
+- `draft`
+- `approved`
+- `scheduled`
+- `posted`
+
+Operational states still sit alongside that main path:
+
+- `retrying`
+- `failed`
+
+That keeps editorial workflow and delivery workflow honest without collapsing them into one vague "scheduled post" state.
+
+## Delivery model
+
+- `Dry run` is the default launch mode.
+- `Live API` is available per account, not globally.
+- The scheduler validates a post again before delivery.
+- Successful deliveries move items to `posted`.
+- Failed deliveries either retry with backoff or move into the alert rail.
+
+## Validation model
+
+Validation is shared between frontend and backend so the same rules drive:
+
+- composer feedback
+- drag-and-drop collision blocking
+- queue summaries
+- platform-specific publishing briefs
+- per-target caption and hashtag previews
+- pre-publish checks
+
+Platform rules are split into:
+
+- **hard rules**: treated as blockers
+- **conservative defaults**: treated as warnings
+
+That lets the studio be opinionated without becoming brittle.
+
+## Connector shape
+
+- `server/connectors.mjs` handles delivery per platform.
+- `Bluesky` live posting is implemented for text and image payloads.
+- `YouTube` live upload now consumes the target-level upload title, privacy, made-for-kids, and tag fields from the composer.
+- Other networks currently use dry-run mode plus connector scaffolding so the app can still be launched safely while secrets and approvals are gathered.
+
+## Offline model
+
+- The service worker caches the app shell for offline relaunches.
+- The shell now avoids external font dependencies so the UI stays self-contained.
+- Browser local storage keeps the active composer draft even before it is saved into the main queue.
+- Audio uploads are kept locally as soundtrack references and are not counted as primary publish media for visual-first networks.
+
+## Deployment shape
+
+- Local launch: `start.cmd`
+- Container launch: `docker build` + `docker run`
+- Managed host target: any Node-capable host that can expose the server and persist local or mounted storage
+
+For a future hosted production move, the natural next step is swapping local JSON storage for a database and object storage layer while keeping the frontend and validation contracts intact.

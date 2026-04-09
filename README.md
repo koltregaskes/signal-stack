@@ -1,44 +1,62 @@
 # Signal Stack
 
-`Signal Stack` is a local creator scheduling tool focused on image and video platforms.
+`Signal Stack` is a local-first creator scheduling studio for image and video publishing.
 
-This is not meant to replace your text-based workflow. It is specifically aimed at the gap you still have for Instagram, TikTok, and YouTube, while keeping the product feel closer to Typefully than Buffer.
+It is built for the gap between text-first schedulers and the real work of planning Instagram, TikTok, YouTube, Shorts, X, Bluesky, and Threads. The product direction is still crisp and creator-focused, but the repo now ships a real local app instead of just a visual preview.
 
 ## Quick links
 - [Architecture overview](ARCHITECTURE.md)
+- [Platform API research](PLATFORM-API-RESEARCH.md)
 - [Setup guide](SETUP.md)
 - [Usage notes](USAGE.md)
 - [Troubleshooting](TROUBLESHOOTING.md)
 - [Changelog](CHANGELOG.md)
-- [UI preview](web/index.html)
+- [App entry](web/index.html)
 
-## Product Direction
+## What ships now
 
-- Desktop or web tool for visual-content scheduling
-- Strong focus on Instagram, TikTok, and YouTube
-- Cleaner creator workflow inspired by Typefully
-- Better support for image posts, video posts, scheduling, and media validation
+- Zero-build frontend with a polished scheduling cockpit
+- Local Node backend for posts, accounts, alerts, uploads, and due-item processing
+- True creator pipeline: `idea -> draft -> approved -> scheduled -> posted`
+- Week and month calendar views that read from the pipeline
+- Structured per-item platform targets with account routing for Instagram, TikTok, YouTube, and the wider platform set
+- Base and per-target title / caption / hashtag handling
+- Platform-specific publishing briefs for Instagram, TikTok, YouTube, and Shorts
+- Local media metadata capture plus image/video/thumbnail/audio URL slots
+- Local audio uploads as soundtrack references for rendered cuts
+- Per-platform validation for captions, ratios, durations, media counts, and quote routing
+- Account routing, including moving a post to another X account
+- Local draft persistence in the browser plus JSON import/export for the pipeline
+- Retry and alert rail for scheduled delivery issues
+- Offline-first shell caching without external font dependencies
+- Docker scaffold and `.env.example` for live connector setup
 
-## What It Does Now
+## Publishing modes
 
-- Saves queue items locally in the browser
-- Handles drafts, scheduled posts, and published posts
-- Gives you a reusable composer for Instagram, TikTok, YouTube, and Shorts
-- Shows a weekly calendar view grouped by day
-- Runs live validation for ratio, duration, caption length, and quote-link basics
-- Includes reusable templates plus JSON queue export and import
+- `Dry run`: fully usable now and safe for launch/demo work
+- `Live API`: configurable account-by-account once secrets are present
+- `Bluesky`: live posting is wired for text and image posts
+- `Instagram`, `Threads`, `TikTok`, `YouTube`, `Shorts`, `X`: connector scaffolding and validation are in place, but live delivery still depends on app credentials, OAuth, and platform approval
 
-## What Is Still Missing
-- Real authentication and platform API connections
-- Per-platform media upload and publish flows
-- Richer Instagram, TikTok, and YouTube specific rules
-- Even better Typefully-style writing and scheduling ergonomics
-- AI helper features for captions, hashtags, and timing suggestions
+`YouTube` live upload now also reads the per-target upload title, privacy, audience, and tag metadata from the studio.
 
-## Current Status
+## Recommended launch scope
 
-- Launchable as a local offline-first scheduler
-- Docs are in place for setup and usage
-- Public GitHub Pages preview is live
-- A launcher is available in `W:\Agent Workspace 2\tools\buffer-replacement`
-- This is another good candidate to migrate into the Agent Workspace 2 hub system once the real platform flows are built
+- Use official APIs for `Instagram`, `TikTok`, and `YouTube/Shorts`
+- Keep `X` and `Threads` on `Typefully`
+- Treat browser automation as a supervised fallback, not the default delivery architecture
+
+The reasoning and current cost readout live in [PLATFORM-API-RESEARCH.md](PLATFORM-API-RESEARCH.md).
+
+## Notes on validation
+
+- Official limits are treated as hard blockers where we have high confidence.
+- Conservative launch defaults are surfaced as warnings instead of hard stops.
+- That keeps the studio useful now without pretending every platform rule is perfectly static forever.
+
+## Current status
+
+- Launchable locally with `start.cmd`
+- Testable with `node --test`
+- Container-ready with `Dockerfile`
+- Still able to fall back to a static preview when the backend is unavailable

@@ -6,20 +6,18 @@
   <title>Signal Stack</title>
   <meta
     name="description"
-    content="Signal Stack is an offline-first creator scheduler for Instagram, TikTok, YouTube, and Shorts."
+    content="Signal Stack is a local-first creator scheduling studio for Instagram, TikTok, YouTube, Shorts, X, Bluesky, and Threads."
   />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#0a0c0f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260409f" />
+  <link rel="stylesheet" href="styles.css?v=20260409f" />
 </head>
 <body>
   <div class="background" aria-hidden="true">
     <div class="background__glow background__glow--amber"></div>
     <div class="background__glow background__glow--mint"></div>
+    <div class="background__mesh"></div>
     <div class="background__grid"></div>
   </div>
 
@@ -29,54 +27,55 @@
       <div>
         <p class="eyebrow">Creator Scheduling Studio</p>
         <h1>Signal Stack</h1>
-        <p class="subhead">A sharper local workflow for Instagram, TikTok, YouTube, and Shorts.</p>
+        <p class="subhead">A sharp local command room for visual campaigns, queue health, and launch timing.</p>
       </div>
     </div>
 
     <div class="topbar__actions">
       <div class="status-cluster">
-        <span class="status-pill status-pill--live">Offline-first</span>
-        <span class="status-pill">Local save</span>
-        <span class="status-pill">API-ready later</span>
+        <span id="modeBadge" class="status-pill status-pill--live">Booting</span>
+        <span id="connectorBadge" class="status-pill">Checking connectors</span>
+        <span id="backendBadge" class="status-pill">Loading data</span>
       </div>
-      <button id="importQueueBtn" class="button button--ghost" type="button">Import Queue</button>
-      <button id="exportQueueBtn" class="button button--ghost" type="button">Export Queue</button>
-      <input id="importQueueInput" type="file" accept="application/json" hidden />
+      <div class="action-row">
+        <button id="runDueBtn" class="button button--primary" type="button">Run Due Now</button>
+        <button id="manageAccountsBtn" class="button button--ghost" type="button">Manage Accounts</button>
+        <button id="importQueueBtn" class="button button--ghost" type="button">Import Queue</button>
+        <button id="exportQueueBtn" class="button button--ghost" type="button">Export Queue</button>
+        <button id="logoutBtn" class="button button--ghost" type="button" hidden>Logout</button>
+        <input id="importQueueInput" type="file" accept="application/json" hidden />
+      </div>
     </div>
   </header>
 
-  <main class="workspace">
-    <section class="hero-panel panel">
-      <div>
-        <p class="eyebrow">Why this exists</p>
-        <h2>Typefully-style flow, but for visual publishing.</h2>
+  <main id="workspace" class="workspace">
+    <section id="launchHero" class="hero panel">
+      <div class="hero__copy">
+        <p class="eyebrow">Launch view</p>
+        <h2>Shape ideas into approved, scheduled, and posted work without leaving a local command room.</h2>
+        <p class="hint">Drafts persist locally, the calendar reads the real pipeline, and live connectors can still be switched on account by account when you are ready.</p>
       </div>
-      <div class="hero-panel__facts">
-        <article>
-          <span>Instagram</span>
-          <strong>Carousels, reels, static drops</strong>
-        </article>
-        <article>
-          <span>TikTok</span>
-          <strong>Quick clip pipeline and duration checks</strong>
-        </article>
-        <article>
-          <span>YouTube</span>
-          <strong>Long-form posts plus Shorts planning</strong>
-        </article>
-      </div>
+      <div id="heroMetrics" class="hero__metrics"></div>
     </section>
 
     <section class="composer panel">
       <div class="panel-head">
         <div>
           <p class="eyebrow">Composer</p>
-          <h2>Build a post once, tailor it per platform.</h2>
-          <p class="hint">Everything here saves locally, so you can shape a queue before any real API connection exists.</p>
+          <h2>Build once, route cleanly per platform.</h2>
+          <p class="hint">Attach real media, assign target accounts, and catch launch blockers before anything hits the queue.</p>
         </div>
-        <div class="panel-head__actions">
-          <button id="saveDraftBtn" class="button button--ghost" type="button">Save Draft</button>
-          <button id="resetComposerBtn" class="button button--ghost" type="button">Reset</button>
+        <div class="composer-head-controls">
+          <div class="layout-controls" aria-label="Workspace layout controls">
+            <button id="compactModeBtn" class="button button--ghost" type="button" aria-pressed="false">Compact</button>
+            <button id="heroCollapseBtn" class="button button--ghost" type="button" aria-pressed="true">Launch Strip</button>
+            <button id="inspectorToggleBtn" class="button button--ghost" type="button" aria-pressed="true">Inspector</button>
+          </div>
+          <div class="panel-head__actions">
+            <button id="saveDraftBtn" class="button button--ghost" type="button">Save Draft</button>
+            <button id="resetComposerBtn" class="button button--ghost" type="button">Reset</button>
+            <button id="duplicateComposerBtn" class="button button--ghost" type="button">Duplicate</button>
+          </div>
         </div>
       </div>
 
@@ -84,134 +83,277 @@
         <button class="template-card" type="button" data-template="reel-teaser">
           <span class="template-card__label">Template</span>
           <strong>Reel teaser</strong>
-          <small>Instagram + TikTok + Shorts</small>
+          <small>Vertical burst for IG, TikTok, and Shorts</small>
         </button>
         <button class="template-card" type="button" data-template="youtube-drop">
           <span class="template-card__label">Template</span>
           <strong>YouTube drop</strong>
-          <small>Long-form plus Shorts support</small>
+          <small>Main upload plus cutdown support</small>
         </button>
-        <button class="template-card" type="button" data-template="trailer-pulse">
+        <button class="template-card" type="button" data-template="quote-pulse">
           <span class="template-card__label">Template</span>
-          <strong>Trailer pulse</strong>
-          <small>One-day campaign burst</small>
+          <strong>Quote pulse</strong>
+          <small>X and Threads callback with source link</small>
         </button>
       </div>
 
+      <div id="pipelineRail" class="pipeline-rail"></div>
+
       <form id="composerForm" class="composer-form">
-        <div class="field-row field-row--wide">
-          <label class="field">
-            <span class="field__label">Title</span>
-            <input id="titleInput" class="field__control" type="text" placeholder="Midjourney teaser batch 12" required />
-          </label>
-          <label class="field">
-            <span class="field__label">Schedule</span>
-            <input id="scheduleInput" class="field__control" type="datetime-local" required />
-          </label>
-        </div>
+        <div class="composer-shell">
+          <section class="composer-cockpit">
+            <div class="composer-stage">
+              <div class="composer-stage__head">
+                <div>
+                  <p class="eyebrow">Asset Stage</p>
+                  <h3>Drop the image or video first.</h3>
+                  <p class="hint">The media surface stays visible at all times so the creative itself leads the workflow.</p>
+                </div>
+                <button id="clearMediaBtn" class="button button--ghost" type="button">Clear media</button>
+              </div>
 
-        <label class="field">
-          <span class="field__label">Caption / hook</span>
-          <textarea id="captionInput" class="field__control field__control--textarea" placeholder="Write the post once, then adjust it later per channel."></textarea>
-          <div class="field__meta">
-            <span id="captionCount">0 characters</span>
-            <span>Local draft text only</span>
+              <label class="upload-drop upload-drop--hero" for="mediaInput">
+                <input id="mediaInput" type="file" accept="image/*,video/*,audio/*" multiple hidden />
+                <strong>Upload the image, video, or soundtrack reference</strong>
+                <span>Visual assets are the primary publish payload. Audio stays available as a soundtrack reference for rendered cuts.</span>
+              </label>
+
+              <div id="mediaList" class="media-list"></div>
+            </div>
+
+            <aside class="composer-sidebar">
+              <div class="composer-sidebar__block">
+                <p class="eyebrow">Quick setup</p>
+                <div class="composer-meta-grid">
+                  <label class="field">
+                    <span class="field__label">Title</span>
+                    <input id="titleInput" class="field__control" type="text" placeholder="Midjourney launch teaser batch" required />
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Schedule</span>
+                    <input id="scheduleInput" class="field__control" type="datetime-local" required />
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Content group</span>
+                    <select id="groupInput" class="field__control">
+                      <option value="Art Drop">Art Drop</option>
+                      <option value="Video Push">Video Push</option>
+                      <option value="Launch Beat">Launch Beat</option>
+                      <option value="Community Pulse">Community Pulse</option>
+                      <option value="Behind The Scenes">Behind The Scenes</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Status</span>
+                    <select id="statusInput" class="field__control">
+                      <option value="idea">Idea</option>
+                      <option value="draft">Draft</option>
+                      <option value="approved">Approved</option>
+                      <option value="scheduled">Scheduled</option>
+                      <option value="posted">Posted</option>
+                      <option value="retrying">Retrying</option>
+                      <option value="failed">Failed</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="composer-sidebar__block">
+                <p class="eyebrow">Media profile</p>
+                <div class="composer-meta-grid composer-meta-grid--compact">
+                  <label class="field">
+                    <span class="field__label">Media type</span>
+                    <select id="mediaTypeInput" class="field__control">
+                      <option value="image">Image</option>
+                      <option value="video">Video</option>
+                      <option value="carousel">Carousel</option>
+                      <option value="mixed">Mixed</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Aspect ratio</span>
+                    <select id="ratioInput" class="field__control">
+                      <option value="9:16">9:16</option>
+                      <option value="4:5">4:5</option>
+                      <option value="1:1">1:1</option>
+                      <option value="16:9">16:9</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Duration (seconds)</span>
+                    <input id="durationInput" class="field__control" type="number" min="0" value="30" />
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Asset count</span>
+                    <input id="mediaCountInput" class="field__control" type="number" min="0" value="0" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="composer-sidebar__footer">
+                <p id="draftPersistenceNote" class="composer-draft-note">Composer drafts autosave locally on this device.</p>
+                <button id="scheduleBtn" class="button button--primary" type="submit">Save To Queue</button>
+              </div>
+            </aside>
+          </section>
+
+          <div class="composer-tabbar" role="tablist" aria-label="Composer sections">
+            <button id="composerTargetsTabBtn" class="button button--ghost" type="button" data-composer-tab="targets" role="tab" aria-controls="composerTargetsPanel" aria-selected="true">Platforms</button>
+            <button id="composerCopyTabBtn" class="button button--ghost" type="button" data-composer-tab="copy" role="tab" aria-controls="composerCopyPanel" aria-selected="false">Copy</button>
+            <button id="composerSupportTabBtn" class="button button--ghost" type="button" data-composer-tab="support" role="tab" aria-controls="composerSupportPanel" aria-selected="false">Support</button>
           </div>
-        </label>
 
-        <div class="field-row">
-          <fieldset class="field field--platforms">
-            <legend class="field__label">Platform targets</legend>
-            <div id="platformOptions" class="platform-grid"></div>
-          </fieldset>
+          <section id="composerTargetsPanel" class="composer-panel composer-panel--active" data-composer-panel="targets" role="tabpanel" aria-labelledby="composerTargetsTabBtn">
+            <div class="composer-panel__head">
+              <div>
+                <p class="eyebrow">Platforms</p>
+                <h3>Toggle the destinations, then fill the brief only for the ones you need.</h3>
+              </div>
+              <button id="moveTargetsBtn" class="button button--ghost" type="button">Quick route</button>
+            </div>
+            <fieldset class="field field--platforms">
+              <legend class="field__label">Platform targets</legend>
+              <div id="platformOptions" class="platform-grid"></div>
+            </fieldset>
+            <div id="platformTargetGrid" class="target-grid"></div>
+          </section>
 
-          <div class="stack">
+          <section id="composerCopyPanel" class="composer-panel" data-composer-panel="copy" role="tabpanel" aria-labelledby="composerCopyTabBtn" hidden>
+            <div class="composer-panel__head">
+              <div>
+                <p class="eyebrow">Copy</p>
+                <h3>Keep the story short, then override only where a platform needs it.</h3>
+              </div>
+            </div>
             <label class="field">
-              <span class="field__label">Content group</span>
-              <select id="groupInput" class="field__control">
-                <option value="Art Drop">Art Drop</option>
-                <option value="Video Push">Video Push</option>
-                <option value="Launch Beat">Launch Beat</option>
-                <option value="Community Pulse">Community Pulse</option>
-              </select>
+              <span class="field__label">Base caption / creative spine</span>
+              <textarea id="captionInput" class="field__control field__control--textarea" placeholder="Write the shared story once, then refine it per target below."></textarea>
+              <div class="field__meta">
+                <span id="captionCount">0 characters</span>
+              </div>
             </label>
 
             <label class="field">
-              <span class="field__label">Status</span>
-              <select id="statusInput" class="field__control">
-                <option value="scheduled">Scheduled</option>
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
+              <span class="field__label">Base hashtags</span>
+              <input id="hashtagsInput" class="field__control" type="text" placeholder="#launch #studio #behindthescenes" />
             </label>
-          </div>
-        </div>
+          </section>
 
-        <div class="field-row">
-          <label class="field">
-            <span class="field__label">Media type</span>
-            <select id="mediaTypeInput" class="field__control">
-              <option value="image">Image</option>
-              <option value="video">Video</option>
-              <option value="carousel">Carousel</option>
-              <option value="mixed">Mixed</option>
-            </select>
-          </label>
+          <section id="composerSupportPanel" class="composer-panel" data-composer-panel="support" role="tabpanel" aria-labelledby="composerSupportTabBtn" hidden>
+            <div class="composer-panel__head">
+              <div>
+                <p class="eyebrow">Support</p>
+                <h3>Links, notes, and remote asset slots stay tucked away until you need them.</h3>
+              </div>
+            </div>
 
-          <label class="field">
-            <span class="field__label">Aspect ratio</span>
-            <select id="ratioInput" class="field__control">
-              <option value="9:16">9:16</option>
-              <option value="4:5">4:5</option>
-              <option value="1:1">1:1</option>
-              <option value="16:9">16:9</option>
-            </select>
-          </label>
+            <div class="field-row field-row--assets">
+              <label class="field">
+                <span class="field__label">Image URL slot</span>
+                <input id="imageUrlInput" class="field__control" type="url" placeholder="https://cdn.example.com/launch-frame.jpg" />
+              </label>
 
-          <label class="field">
-            <span class="field__label">Duration (seconds)</span>
-            <input id="durationInput" class="field__control" type="number" min="0" value="30" />
-          </label>
+              <label class="field">
+                <span class="field__label">Video URL slot</span>
+                <input id="videoUrlInput" class="field__control" type="url" placeholder="https://cdn.example.com/launch-cut.mp4" />
+              </label>
 
-          <label class="field">
-            <span class="field__label">Media items</span>
-            <input id="mediaCountInput" class="field__control" type="number" min="1" value="1" />
-          </label>
-        </div>
+              <label class="field">
+                <span class="field__label">Thumbnail URL slot</span>
+                <input id="thumbnailUrlInput" class="field__control" type="url" placeholder="https://cdn.example.com/thumb.jpg" />
+              </label>
 
-        <div class="field-row">
-          <label class="field">
-            <span class="field__label">Source / quote URL</span>
-            <input id="sourceUrlInput" class="field__control" type="url" placeholder="https://x.com/... or source link" />
-          </label>
+              <label class="field">
+                <span class="field__label">Audio URL slot</span>
+                <input id="audioUrlInput" class="field__control" type="url" placeholder="https://cdn.example.com/soundtrack.wav" />
+              </label>
+            </div>
 
-          <label class="field field--toggle">
-            <span class="field__label">Quote mode</span>
-            <span class="toggle">
-              <input id="quoteToggle" type="checkbox" />
-              <span class="toggle__visual"></span>
-              <span class="toggle__copy">Treat source URL as a quote or reference post</span>
-            </span>
-          </label>
-        </div>
+            <div class="field-row field-row--support">
+              <label class="field">
+                <span class="field__label">Source / quote URL</span>
+                <input id="sourceUrlInput" class="field__control" type="url" placeholder="https://x.com/... or source link" />
+              </label>
 
-        <label class="field">
-          <span class="field__label">Notes</span>
-          <textarea id="notesInput" class="field__control field__control--notes" placeholder="Anything to remember: asset folder, thumbnail plan, alternate hook, AI caption idea."></textarea>
-        </label>
+              <label class="field field--toggle">
+                <span class="field__label">Quote mode</span>
+                <span class="toggle">
+                  <input id="quoteToggle" type="checkbox" />
+                  <span class="toggle__visual"></span>
+                  <span class="toggle__copy">Treat the source URL as a quote or reference target</span>
+                </span>
+              </label>
+            </div>
 
-        <div class="composer-actions">
-          <button id="scheduleBtn" class="button button--primary" type="submit">Save To Queue</button>
-          <button id="duplicateComposerBtn" class="button button--ghost" type="button">Duplicate Current</button>
+            <label class="field">
+              <span class="field__label">Notes</span>
+              <textarea id="notesInput" class="field__control field__control--notes" placeholder="Thumbnail note, CTA variation, cutdown reminder, or AI prompt idea."></textarea>
+            </label>
+          </section>
         </div>
       </form>
+    </section>
+
+    <aside id="studioRail" class="studio-rail">
+      <section class="panel rail-card inspector-card">
+        <div class="panel-head panel-head--stack inspector-card__head">
+          <div>
+            <p class="eyebrow">Inspector</p>
+            <h2>Checks and routing</h2>
+            <p class="hint">Keep this dock open while planning, or slide it away when you just want the stage.</p>
+          </div>
+          <div class="view-toggle inspector-tabs" role="tablist" aria-label="Inspector sections">
+            <button id="inspectorChecksTabBtn" class="button button--ghost" type="button" role="tab" aria-controls="inspectorChecksPanel" aria-selected="true">Checks</button>
+            <button id="inspectorAccountsTabBtn" class="button button--ghost" type="button" role="tab" aria-controls="inspectorAccountsPanel" aria-selected="false">Accounts</button>
+          </div>
+        </div>
+
+        <section id="inspectorChecksPanel" class="inspector-panel inspector-panel--active" role="tabpanel" aria-labelledby="inspectorChecksTabBtn">
+          <div id="validationSummary" class="validation-summary"></div>
+          <ul id="validationList" class="validation-list"></ul>
+        </section>
+
+        <section id="inspectorAccountsPanel" class="inspector-panel" role="tabpanel" aria-labelledby="inspectorAccountsTabBtn" hidden>
+          <div class="panel-head panel-head--stack inspector-panel__head">
+            <div>
+              <p class="eyebrow">Accounts</p>
+              <h3>Routing deck</h3>
+            </div>
+            <button id="openAccountCreateBtn" class="button button--ghost" type="button">Add Account</button>
+          </div>
+          <div id="accountGrid" class="account-grid"></div>
+        </section>
+      </section>
+    </aside>
+
+    <section class="calendar panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Calendar</p>
+          <h2>Read the pipeline as a week or month, then drag work into cleaner slots.</h2>
+          <p class="hint">Week view is for fine-grained movement. Month view is for campaign pacing and density.</p>
+        </div>
+        <div class="calendar-toolbar">
+          <div class="view-toggle">
+            <button id="calendarWeekViewBtn" class="button button--ghost" type="button">Week</button>
+            <button id="calendarMonthViewBtn" class="button button--ghost" type="button">Month</button>
+          </div>
+          <div class="week-controls">
+          <button id="previousWeekBtn" class="button button--ghost" type="button">Previous</button>
+          <button id="currentWeekBtn" class="button button--ghost" type="button">This Week</button>
+          <button id="nextWeekBtn" class="button button--ghost" type="button">Next</button>
+          </div>
+        </div>
+      </div>
+      <div id="calendarHeading" class="calendar-heading"></div>
+      <div id="calendarGrid" class="calendar-grid"></div>
     </section>
 
     <section class="queue panel">
       <div class="panel-head">
         <div>
           <p class="eyebrow">Queue</p>
-          <h2>Everything scheduled, draft, or already published.</h2>
+          <h2>Ideas, approvals, schedules, retries, and posted work in one sweep.</h2>
         </div>
         <div class="queue-toolbar">
           <input id="searchInput" class="field__control field__control--search" type="search" placeholder="Search queue..." />
@@ -221,43 +363,128 @@
       <div id="queueList" class="queue-list"></div>
     </section>
 
-    <section class="calendar panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Weekly view</p>
-          <h2>Spot collisions and empty posting lanes.</h2>
-          <p class="hint">Cards are grouped by upcoming weekday so you can see pressure points at a glance.</p>
+    <section class="intel-grid">
+      <section class="panel intel-card">
+        <div class="panel-head panel-head--stack">
+          <div>
+            <p class="eyebrow">Signals</p>
+            <h2>Alerts</h2>
+          </div>
+          <p class="hint">Retries and hard failures surface here.</p>
         </div>
-      </div>
-      <div id="calendarGrid" class="calendar-grid"></div>
-    </section>
+        <div id="alertList" class="alert-list"></div>
+      </section>
 
-    <section class="intel panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Checks</p>
-          <h2>Validation rail and launch totals.</h2>
+      <section class="panel intel-card">
+        <div class="panel-head panel-head--stack">
+          <div>
+            <p class="eyebrow">Activity</p>
+            <h2>Delivery log</h2>
+          </div>
+          <p class="hint">Recent successful publishes and scheduler runs.</p>
         </div>
-      </div>
-      <div class="intel-grid">
-        <div class="intel-card">
-          <p class="intel-card__label">Composer validation</p>
-          <ul id="validationList" class="validation-list"></ul>
-        </div>
-        <div class="intel-card">
-          <p class="intel-card__label">Queue summary</p>
-          <div id="insightStats" class="stats-grid"></div>
-        </div>
-      </div>
+        <div id="activityList" class="activity-list"></div>
+      </section>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p>&copy; 2026 Kol Tregaskes. All rights reserved.</p>
+    <p>&copy; 2026 Kol Tregaskes. All rights reserved. <a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a></p>
   </footer>
 
+  <dialog id="routeDialog" class="dialog">
+    <form id="routeForm" class="dialog__body" method="dialog">
+      <div class="dialog__head">
+        <div>
+          <p class="eyebrow">Routing</p>
+          <h2>Move this post to another account</h2>
+        </div>
+        <button class="button button--ghost" type="button" data-close-dialog="routeDialog">Close</button>
+      </div>
+      <div id="routeFields" class="dialog__fields"></div>
+      <div class="dialog__actions">
+        <button class="button button--ghost" type="button" data-close-dialog="routeDialog">Cancel</button>
+        <button class="button button--primary" type="submit">Save Routes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="dialog">
+    <form id="accountForm" class="dialog__body" method="dialog">
+      <div class="dialog__head">
+        <div>
+          <p class="eyebrow">Accounts</p>
+          <h2>Manage routing account</h2>
+        </div>
+        <button class="button button--ghost" type="button" data-close-dialog="accountDialog">Close</button>
+      </div>
+      <input id="accountIdInput" type="hidden" />
+      <div class="dialog__fields dialog__fields--grid">
+        <label class="field">
+          <span class="field__label">Platform</span>
+          <select id="accountPlatformInput" class="field__control"></select>
+        </label>
+        <label class="field">
+          <span class="field__label">Label</span>
+          <input id="accountLabelInput" class="field__control" type="text" placeholder="X Main" />
+        </label>
+        <label class="field">
+          <span class="field__label">Handle / channel</span>
+          <input id="accountHandleInput" class="field__control" type="text" placeholder="@kolsignal" />
+        </label>
+        <label class="field">
+          <span class="field__label">Mode</span>
+          <select id="accountModeInput" class="field__control">
+            <option value="dry-run">Dry run</option>
+            <option value="api">Live API</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label">Status</span>
+          <select id="accountStatusInput" class="field__control">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+          </select>
+        </label>
+        <label class="field field--toggle">
+          <span class="field__label">Default route</span>
+          <span class="toggle">
+            <input id="accountDefaultInput" type="checkbox" />
+            <span class="toggle__visual"></span>
+            <span class="toggle__copy">Use this account when a new post targets this platform</span>
+          </span>
+        </label>
+      </div>
+      <div class="dialog__actions">
+        <button class="button button--ghost" type="button" data-close-dialog="accountDialog">Cancel</button>
+        <button class="button button--primary" type="submit">Save Account</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="sessionDialog" class="dialog">
+    <form id="sessionForm" class="dialog__body" method="dialog">
+      <div class="dialog__head">
+        <div>
+          <p class="eyebrow">Protected Studio</p>
+          <h2>Enter the app password</h2>
+        </div>
+      </div>
+      <p class="dialog__note">This hosted Signal Stack instance is locked before it will reveal queue data or connected account details.</p>
+      <input type="text" name="username" value="signal-stack" autocomplete="username" hidden />
+      <label class="field">
+        <span class="field__label">Password</span>
+        <input id="sessionPasswordInput" class="field__control" type="password" autocomplete="current-password" />
+      </label>
+      <p id="sessionError" class="dialog__note" hidden></p>
+      <div class="dialog__actions">
+        <button class="button button--primary" type="submit">Unlock Signal Stack</button>
+      </div>
+    </form>
+  </dialog>
+
   <template id="queueCardTemplate">
-    <article class="queue-card">
+    <article class="queue-card" draggable="true">
       <div class="queue-card__top">
         <div>
           <span class="queue-card__status"></span>
@@ -268,15 +495,17 @@
       <p class="queue-card__caption"></p>
       <div class="queue-card__meta"></div>
       <div class="queue-card__platforms"></div>
+      <div class="queue-card__assets"></div>
       <div class="queue-card__actions">
         <button class="button button--ghost action-load" type="button">Load</button>
         <button class="button button--ghost action-duplicate" type="button">Duplicate</button>
-        <button class="button button--ghost action-toggle" type="button">Toggle Status</button>
+        <button class="button button--ghost action-route" type="button">Move Targets</button>
+        <button class="button button--ghost action-toggle" type="button">Advance Stage</button>
         <button class="button button--ghost action-delete" type="button">Delete</button>
       </div>
     </article>
   </template>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js?v=20260409f"></script>
 </body>
 </html>

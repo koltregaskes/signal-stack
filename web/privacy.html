@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Stack Privacy</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="workspace" style="grid-template-columns: 1fr; grid-template-areas: 'hero'; min-height: 100vh;">
+    <section class="panel hero" style="grid-area: hero;">
+      <div class="hero__copy">
+        <p class="eyebrow">Policy</p>
+        <h1>Signal Stack Privacy Policy</h1>
+        <p class="subhead">This document is a production-ready starter for a personal or small-team deployment of Signal Stack.</p>
+        <p class="hint">Update the owner name, contact email, hosting details, and retention periods before using this page in a formal platform review.</p>
+      </div>
+      <div class="metric-card">
+        <strong>Contact</strong>
+        <small>Email: replace-with-your-support-email@example.com</small>
+      </div>
+    </section>
+
+    <section class="panel" style="padding: 24px;">
+      <h2>What Signal Stack Stores</h2>
+      <p>Signal Stack stores queue items, account labels, publishing schedules, upload metadata, local media files, alerts, and activity logs so the app can plan and deliver creator posts.</p>
+      <h2>Connected Accounts</h2>
+      <p>When a platform account is connected through OAuth, Signal Stack may store access tokens, refresh tokens, account identifiers, granted scopes, and publishing capability metadata. In this build, token material is intended to be encrypted at rest when a token encryption key is configured.</p>
+      <h2>How Data Is Used</h2>
+      <p>Data is used only to let the account owner schedule posts, validate payloads, connect supported platforms, upload media, and trigger publishing actions through official provider APIs.</p>
+      <h2>Data Sharing</h2>
+      <p>Signal Stack shares data only with the platforms the account owner explicitly connects for publishing workflows, such as YouTube, Instagram, or TikTok.</p>
+      <h2>Retention</h2>
+      <p>Queue data, uploads, and connector metadata remain stored until the app operator deletes them or resets the deployment storage.</p>
+      <h2>Security</h2>
+      <p>This deployment can be protected with an app password, signed sessions, upload size limits, origin checks for mutating requests, and encrypted connector credentials when the recommended environment variables are set.</p>
+      <h2>Your Choices</h2>
+      <p>The app operator can disconnect linked accounts, remove local queue items, delete uploaded media, and rotate application secrets.</p>
+    </section>
+  </main>
+</body>
+</html>

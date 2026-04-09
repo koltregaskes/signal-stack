@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Signal Stack">
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff8f45" />
+      <stop offset="100%" stop-color="#ffd07d" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#0b0e13" />
+  <rect x="18" y="18" width="92" height="92" rx="24" fill="url(#g)" />
+  <path d="M42 46h38c9 0 14 4 14 11 0 5-3 8-8 10 7 2 10 6 10 12 0 9-6 13-16 13H42V46Zm16 18h18c3 0 5-1 5-4s-2-4-5-4H58v8Zm0 18h20c4 0 6-1 6-5 0-3-2-5-6-5H58v10Z" fill="#1c120c"/>
+  <path d="M30 88 98 40" stroke="#fef3e9" stroke-opacity=".25" stroke-width="4" stroke-linecap="round"/>
+</svg>

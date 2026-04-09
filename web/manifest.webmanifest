@@ -1,0 +1,9 @@
+{
+  "name": "Signal Stack",
+  "short_name": "Signal Stack",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#090b0f",
+  "theme_color": "#090b0f",
+  "description": "Local-first creator scheduling studio for visual campaign planning and routing."
+}

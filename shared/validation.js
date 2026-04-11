@@ -40,6 +40,7 @@ export function createEmptyPost() {
     lastError: '',
     nextAttemptAt: '',
     deliveryResults: [],
+    publishHistory: [],
     approvedAt: '',
     postedAt: '',
     lastPublishedAt: '',
@@ -102,7 +103,8 @@ export function normalisePost(post = {}, accounts = []) {
     attemptCount: Math.max(0, Number(post.attemptCount || 0)),
     lastError: typeof post.lastError === 'string' ? post.lastError : '',
     nextAttemptAt: typeof post.nextAttemptAt === 'string' ? post.nextAttemptAt : '',
-    deliveryResults: Array.isArray(post.deliveryResults) ? post.deliveryResults : [],
+    deliveryResults: Array.isArray(post.deliveryResults) ? post.deliveryResults.map(normaliseDeliveryResult) : [],
+    publishHistory: Array.isArray(post.publishHistory) ? post.publishHistory.map(normalisePublishHistoryEntry) : [],
     approvedAt: typeof post.approvedAt === 'string' ? post.approvedAt : '',
     postedAt: typeof post.postedAt === 'string' ? post.postedAt : '',
     lastPublishedAt: typeof post.lastPublishedAt === 'string' ? post.lastPublishedAt : '',
@@ -510,6 +512,33 @@ function normaliseMediaItem(media = {}) {
     durationSeconds: Math.max(0, Number(media.durationSeconds || 0)),
     storageId: typeof media.storageId === 'string' ? media.storageId : '',
     previewUrl: typeof media.previewUrl === 'string' ? media.previewUrl : ''
+  };
+}
+
+function normaliseDeliveryResult(result = {}) {
+  return {
+    platform: typeof result.platform === 'string' ? result.platform : '',
+    ok: Boolean(result.ok),
+    remoteId: typeof result.remoteId === 'string' ? result.remoteId : '',
+    message: typeof result.message === 'string' ? result.message : '',
+    accountId: typeof result.accountId === 'string' ? result.accountId : '',
+    accountLabel: typeof result.accountLabel === 'string' ? result.accountLabel : '',
+    attemptedAt: typeof result.attemptedAt === 'string' ? result.attemptedAt : ''
+  };
+}
+
+function normalisePublishHistoryEntry(entry = {}) {
+  return {
+    id: typeof entry.id === 'string' && entry.id ? entry.id : crypto.randomUUID(),
+    createdAt: typeof entry.createdAt === 'string' ? entry.createdAt : new Date().toISOString(),
+    outcome: typeof entry.outcome === 'string' ? entry.outcome : 'failed',
+    statusBefore: typeof entry.statusBefore === 'string' ? entry.statusBefore : '',
+    statusAfter: typeof entry.statusAfter === 'string' ? entry.statusAfter : '',
+    summary: typeof entry.summary === 'string' ? entry.summary : '',
+    reason: typeof entry.reason === 'string' ? entry.reason : '',
+    nextAttemptAt: typeof entry.nextAttemptAt === 'string' ? entry.nextAttemptAt : '',
+    attemptCount: Math.max(0, Number(entry.attemptCount || 0)),
+    results: Array.isArray(entry.results) ? entry.results.map(normaliseDeliveryResult) : []
   };
 }
 

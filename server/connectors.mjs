@@ -21,7 +21,7 @@ export async function publishPost(post, accounts, envStatus, runtimeConfig) {
     }
 
     if (!envStatus[platform]?.ready) {
-      results.push(failure(platform, 'Live API mode is selected but secrets are missing.', false));
+      results.push(failure(platform, 'Live API mode is selected but secrets are missing.', false, account));
       continue;
     }
 
@@ -38,15 +38,15 @@ export async function publishPost(post, accounts, envStatus, runtimeConfig) {
     if (platform === 'instagram' || platform === 'tiktok') {
       const access = await ensureAccountAccess(account, runtimeConfig);
       if (!access.ok) {
-        results.push(failure(platform, access.message, access.retryable));
+        results.push(failure(platform, access.message, access.retryable, account));
         continue;
       }
 
-      results.push(failure(platform, `The ${account.label} connection is live, but the ${platform} publish connector still needs its final media-transfer implementation.`, false));
+      results.push(failure(platform, `The ${account.label} connection is live, but the ${platform} publish connector still needs its final media-transfer implementation.`, false, account));
       continue;
     }
 
-    results.push(failure(platform, 'Live API delivery is scaffolded for this platform. Keep it in Dry Run until credentials and OAuth tokens are connected.', false));
+    results.push(failure(platform, 'Live API delivery is scaffolded for this platform. Keep it in Dry Run until credentials and OAuth tokens are connected.', false, account));
   }
 
   return results;
@@ -54,7 +54,7 @@ export async function publishPost(post, accounts, envStatus, runtimeConfig) {
 
 async function postToBluesky(post, account) {
   if (post.media.some((item) => item.kind === 'video')) {
-    return failure('bluesky', 'Live Bluesky delivery currently supports text and image posts only.', false);
+    return failure('bluesky', 'Live Bluesky delivery currently supports text and image posts only.', false, account);
   }
 
   const baseUrl = process.env.BLUESKY_PDS_URL || 'https://bsky.social';
@@ -68,7 +68,7 @@ async function postToBluesky(post, account) {
   });
 
   if (!sessionResponse.ok) {
-    return failure('bluesky', 'Bluesky session creation failed. Check the app password and handle.', true);
+    return failure('bluesky', 'Bluesky session creation failed. Check the app password and handle.', true, account);
   }
 
   const session = await sessionResponse.json();
@@ -86,7 +86,7 @@ async function postToBluesky(post, account) {
     });
 
     if (!uploadResponse.ok) {
-      return failure('bluesky', `Uploading ${item.name} to Bluesky failed.`, true);
+      return failure('bluesky', `Uploading ${item.name} to Bluesky failed.`, true, account);
     }
 
     const payload = await uploadResponse.json();
@@ -123,7 +123,7 @@ async function postToBluesky(post, account) {
   });
 
   if (!createResponse.ok) {
-    return failure('bluesky', 'Creating the Bluesky post failed.', true);
+    return failure('bluesky', 'Creating the Bluesky post failed.', true, account);
   }
 
   const payload = await createResponse.json();
@@ -133,12 +133,12 @@ async function postToBluesky(post, account) {
 async function postToYouTube(post, account, runtimeConfig, platform) {
   const video = post.media.find((item) => item.kind === 'video' && item.storageId);
   if (!video?.storageId) {
-    return failure(platform, 'YouTube live upload requires a stored video file.', false);
+    return failure(platform, 'YouTube live upload requires a stored video file.', false, account);
   }
 
   const access = await ensureAccountAccess(account, runtimeConfig);
   if (!access.ok) {
-    return failure(platform, access.message, access.retryable);
+    return failure(platform, access.message, access.retryable, account);
   }
 
   const uploadPath = getUploadPath(video.storageId);
@@ -185,7 +185,7 @@ async function postToYouTube(post, account, runtimeConfig, platform) {
 
   const uploadUrl = initiateResponse.headers.get('location');
   if (!uploadUrl) {
-    return failure(platform, 'YouTube did not return an upload session URL.', true);
+    return failure(platform, 'YouTube did not return an upload session URL.', true, account);
   }
 
   const uploadResponse = await fetch(uploadUrl, {
@@ -244,14 +244,14 @@ function providerFailure(platform, account, details) {
     account.lastAuthError = details.message;
     account.authUpdatedAt = new Date().toISOString();
     account.credentials = '';
-    return failure(platform, details.message, false);
+    return failure(platform, details.message, false, account);
   }
 
   if (details.status === 429 || details.status >= 500) {
-    return failure(platform, details.message, true);
+    return failure(platform, details.message, true, account);
   }
 
-  return failure(platform, details.message, false);
+  return failure(platform, details.message, false, account);
 }
 
 function success(platform, account, message, remoteId = '') {
@@ -265,10 +265,12 @@ function success(platform, account, message, remoteId = '') {
   };
 }
 
-function failure(platform, message, retryable) {
+function failure(platform, message, retryable, account = null) {
   return {
     ok: false,
     platform,
+    accountId: account?.id || '',
+    accountLabel: account?.label || '',
     message,
     retryable
   };

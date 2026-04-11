@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-04-11
+- Added per-post publish history so scheduler runs now leave durable evidence on success, retry, failure, and validation-blocked delivery attempts.
+- Added a `Runs` inspector tab plus a queue-level `Review Runs` action so delivery evidence is visible without leaving the studio.
+- Expanded scheduler activity coverage so blocked, retrying, failed, and successful runs all surface clearly.
+
 ## 2026-04-09
 - Reworked the queue into a real publishing pipeline with `idea`, `draft`, `approved`, `scheduled`, and `posted` stages plus operational `retrying` and `failed` states.
 - Added structured per-item platform target cards with account routing plus per-target caption and hashtag overrides.

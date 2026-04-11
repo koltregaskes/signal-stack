@@ -8,6 +8,7 @@
 - **My composer changes are not in the queue yet**: local draft persistence saves the active composer separately from the queue. Use `Save Draft` or `Save To Queue` to commit it into the shared pipeline.
 - **I uploaded music but the post is still blocked**: audio assets are stored as soundtrack references, not as standalone publish media. Add an image or video too.
 - **The checks or accounts panel is gone**: toggle `Inspector` back on in the composer header. Layout preferences persist locally, so the studio reopens the way you last left it.
+- **I ran the scheduler but want proof of what happened**: use `Review Runs` on the queue card or open the inspector `Runs` tab. That panel now shows route details, provider messages, and the recorded run timeline for the selected post.
 - **The month view looks stale after an update**: refresh once so the latest service worker shell replaces the old cached shell.
 - **A live API account will not validate**: check the matching secrets in `.env`. The UI will keep that route blocked until the required keys are present.
 - **Bluesky live posts fail**: verify `BLUESKY_HANDLE` and `BLUESKY_APP_PASSWORD`, and keep in mind that the current live connector supports text and image posts, not video.

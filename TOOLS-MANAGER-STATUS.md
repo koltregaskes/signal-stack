@@ -1,35 +1,85 @@
 # Tools Manager Status
 
-Updated: 2026-04-09
+Updated: 2026-04-11
+Tool: Signal Stack
+Slug: `signal-stack`
+Owner session: `signal-stack-session`
 
-## Current Phase
-- Release-ready dry-run product is shipped locally and on `origin/main`.
-- Current repo focus has moved from core scheduling/build-out to live connector work.
+## Current State
+- RAG: `Amber`
+- Completion: `88%`
+- Phase: `execution-pass-complete`
+- Install or build state: Local-first Node app + offline web studio + dry-run scheduler
+- Last reviewed: `2026-04-11`
 
 ## Shipped
-- Local-first Signal Stack app with Node backend, shared validation, uploads, JSON persistence, and dry-run scheduler.
-- Media-first composer with pipeline states, per-platform briefs, account routing, layout controls, offline shell, and polished UI.
-- Week and month calendar views, queue import/export, alerts, activity log, and dry-run publish processing.
+- Real creator pipeline: `idea -> draft -> approved -> scheduled -> posted`
+- Week and month calendar views wired to the pipeline
+- Structured platform targets, account routing, uploads, import/export, and offline shell
+- Dry-run scheduler with retries, alerts, activity log, and honest connector gating
+- New execution-history pass:
+  - per-post `publishHistory` recorded on success, retry, failure, and validation-blocked runs
+  - new inspector `Runs` tab with route summaries, latest result details, and timeline cards
+  - queue-level `Review Runs` action for direct access to delivery evidence
 
-## In Progress
-- No active repo-local blocker at the moment.
-- Next engineering slice is live publishing connectors, starting with YouTube.
+## Top 5 Risks / Gaps
+- Live publishing for `Instagram`, `TikTok`, and `YouTube/Shorts` is still not real end to end because platform credentials, OAuth, and approval are external blockers.
+- Existing seeded/local posts created before this pass do not automatically have historical run timelines until the scheduler touches them again.
+- Tests are still strongest around validation and scheduler logic; there is not yet automated browser coverage for the new inspector flow.
+- Local JSON + local uploads are honest and launchable for a creator desktop workflow, but they are not yet hardened for multi-user hosted production.
+- Some platform rules remain conservative warnings rather than hard verified constraints, which is correct for honesty but still leaves product judgement in the loop.
+
+## Execution Pass
+- Chosen chunk: deepen the best honest workflow rather than pretending live connectors are finished.
+- Executed chunk: publish execution history and delivery inspection across scheduler, data model, and UI.
+- Outcome: dry-run publishing is now auditable per post instead of only visible through the global activity feed or last-result state.
+
+## Evidence
+- `node --check web/app.js`
+- `node --check server/scheduler.mjs`
+- `node --check server/connectors.mjs`
+- `node --check shared/validation.js`
+- `node --test`
+- Route checks:
+  - `GET /api/health -> 200`
+  - `GET /api/bootstrap -> 200`
+  - `GET /web/ -> 200`
+- Browser evidence:
+  - inspector now shows a `Runs` tab
+  - a real API-seeded due dry-run item (`Manager execution history smoke post`) was processed through `Run Due Now`
+  - the `Runs` panel showed `Posted`, route details for Instagram, the dry-run provider message, and a `1 recorded run` timeline entry
+  - browser console errors: `0`
 
 ## Remaining
-- Real OAuth and live-post connectors for YouTube/Shorts, Instagram, and TikTok.
-- Hosted production deployment with persistent storage and real secret management.
-- Final production copy/legal pass once the live connector scope is locked.
+- Real YouTube/Shorts live connector completion
+- Real Instagram publish connector completion
+- TikTok draft/direct connector completion with honest review constraints
+- Better automated UI verification for run-history and routing flows
 
 ## Blockers
-- No blocker remains for the shipped dry-run app.
-- Live publishing still depends on external platform credentials, OAuth setup, and approval.
+- External only: platform app credentials, OAuth setup, and provider review/approval for live publishing.
 
 ## Next Actions
-- Wire YouTube live publishing first, then Instagram, then TikTok draft-first.
-- Deploy the app to a persistent Node host and add production secrets.
-- Run a true end-to-end live publish verification once credentials exist.
+- Highest-value next product chunk: finish the `YouTube / Shorts` live connector end to end, because it has the clearest official path and the current app already collects the needed target metadata.
+- After that: Instagram live publish path, then TikTok draft-first.
 
-## Verification Snapshot
-- `node --test` passes.
-- Smoke-tested media-first composer, week/month calendar, account routing, JSON import/export, and dry-run due publishing.
-- Browser console was clean on the final release pass.
+## Dependencies
+- None
+
+## Surfaces
+- Repo: https://github.com/koltregaskes/signal-stack
+- Public: https://koltregaskes.github.io/signal-stack/
+- Private: file:///W:/Repos/_My%20Tools/signal-stack/web/index.html
+
+## Related Status Docs
+- RELEASE-STATUS.md
+
+## Durable Handoff
+- Outcome: execution visibility is materially deeper; dry-run publishing now leaves per-post evidence instead of feeling opaque.
+- Risk: live connector work is still externally blocked, so this pass intentionally strengthened the honest shipped workflow rather than faking connector readiness.
+- Next action: wire the real `YouTube / Shorts` connector once credentials are available.
+
+## Notes
+- This is the standard repo-root manager snapshot for the Tools side.
+- The private Tools Hub and local session inbox should treat this file as the canonical repo-level manager note.
+- No separate session JSON artifact is used in this repo today.

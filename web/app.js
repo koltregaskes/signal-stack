@@ -7,7 +7,7 @@ import {
   getStatusLabel,
   getStatusTone,
   platformCatalog
-} from '../shared/platforms.js?v=20260409c';
+} from '../shared/platforms.js?v=20260411a';
 import {
   addDays,
   buildFutureDate,
@@ -19,7 +19,7 @@ import {
   isSameLocalMonth,
   normaliseLocalDateTime,
   setDateKeepingTime
-} from '../shared/time.js?v=20260409c';
+} from '../shared/time.js?v=20260411a';
 import {
   buildPublishText,
   countPrimaryAssetSlots,
@@ -31,14 +31,13 @@ import {
   normalisePost,
   summariseChecks,
   validatePost
-} from '../shared/validation.js?v=20260409c';
-
+} from '../shared/validation.js?v=20260411a';
 const CACHE_KEY = 'signal-stack-cache-v4';
 const LOCAL_DRAFT_KEY = 'signal-stack-composer-draft-v1';
 const LAYOUT_PREFS_KEY = 'signal-stack-layout-v1';
 const CALENDAR_VIEWS = ['week', 'month'];
 const COMPOSER_TABS = ['targets', 'copy', 'support'];
-const INSPECTOR_TABS = ['checks', 'accounts'];
+const INSPECTOR_TABS = ['checks', 'delivery', 'accounts'];
 
 const templates = {
   'reel-teaser': {
@@ -189,11 +188,14 @@ const dom = {
   composerSupportPanel: document.getElementById('composerSupportPanel'),
   studioRail: document.getElementById('studioRail'),
   inspectorChecksTabBtn: document.getElementById('inspectorChecksTabBtn'),
+  inspectorDeliveryTabBtn: document.getElementById('inspectorDeliveryTabBtn'),
   inspectorAccountsTabBtn: document.getElementById('inspectorAccountsTabBtn'),
   inspectorChecksPanel: document.getElementById('inspectorChecksPanel'),
+  inspectorDeliveryPanel: document.getElementById('inspectorDeliveryPanel'),
   inspectorAccountsPanel: document.getElementById('inspectorAccountsPanel'),
   validationSummary: document.getElementById('validationSummary'),
   validationList: document.getElementById('validationList'),
+  deliveryRunList: document.getElementById('deliveryRunList'),
   accountGrid: document.getElementById('accountGrid'),
   queueList: document.getElementById('queueList'),
   calendarGrid: document.getElementById('calendarGrid'),
@@ -310,8 +312,15 @@ function attachEvents() {
   [dom.composerTargetsTabBtn, dom.composerCopyTabBtn, dom.composerSupportTabBtn].forEach((button) => {
     button.addEventListener('click', () => switchComposerTab(button.dataset.composerTab));
   });
-  [dom.inspectorChecksTabBtn, dom.inspectorAccountsTabBtn].forEach((button) => {
-    button.addEventListener('click', () => switchInspectorTab(button.id === 'inspectorAccountsTabBtn' ? 'accounts' : 'checks'));
+  [dom.inspectorChecksTabBtn, dom.inspectorDeliveryTabBtn, dom.inspectorAccountsTabBtn].forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextTab = button.id === 'inspectorAccountsTabBtn'
+        ? 'accounts'
+        : button.id === 'inspectorDeliveryTabBtn'
+          ? 'delivery'
+          : 'checks';
+      switchInspectorTab(nextTab);
+    });
   });
 
   dom.composerForm.querySelectorAll('input, textarea, select').forEach((field) => {
@@ -353,6 +362,10 @@ function attachEvents() {
     const postId = button.closest('[data-post-id]')?.dataset.postId;
     if (!postId) return;
     if (button.classList.contains('action-load')) loadPost(postId);
+    if (button.classList.contains('action-review')) {
+      loadPost(postId);
+      switchInspectorTab('delivery');
+    }
     if (button.classList.contains('action-duplicate')) await duplicatePost(postId);
     if (button.classList.contains('action-route')) {
       loadPost(postId);
@@ -758,6 +771,7 @@ function renderAll() {
   renderComposerTabs();
   renderPlatformTargetGrid();
   renderValidationRail();
+  renderDeliveryInspector();
   renderDraftPersistenceNote();
   renderMediaList();
   renderAccounts();
@@ -779,6 +793,7 @@ function renderWorkspaceLayout() {
 
   const inspectorMap = [
     ['checks', dom.inspectorChecksTabBtn, dom.inspectorChecksPanel],
+    ['delivery', dom.inspectorDeliveryTabBtn, dom.inspectorDeliveryPanel],
     ['accounts', dom.inspectorAccountsTabBtn, dom.inspectorAccountsPanel]
   ];
 
@@ -948,6 +963,151 @@ function renderValidationRail() {
     .join('');
 
   updateCaptionCount();
+}
+
+function renderDeliveryInspector() {
+  const post = getInspectorPost();
+  if (!post) {
+    dom.deliveryRunList.innerHTML = '<div class="empty-state">Load a queue item to inspect its publish history.</div>';
+    return;
+  }
+
+  const history = Array.isArray(post.publishHistory) ? post.publishHistory : [];
+  const latestRun = history[0] || null;
+  const routeCards = post.platforms.map((platform) => {
+    const account = state.accounts.find((item) => item.id === (post.accountTargets?.[platform] || post.platformTargets?.[platform]?.accountId));
+    return `
+      <article class="delivery-route-card">
+        <span class="delivery-route-card__platform">${escapeHtml(getPlatformLabel(platform))}</span>
+        <strong>${escapeHtml(account?.label || 'No route selected')}</strong>
+        <small>${escapeHtml(account ? `${account.handle} - ${account.mode === 'api' ? 'Live API' : 'Dry run'}` : 'Choose an account before scheduling')}</small>
+      </article>
+    `;
+  }).join('');
+
+  const latestResults = (latestRun?.results || post.deliveryResults || []).map((result) => `
+    <article class="delivery-result delivery-result--${result.ok ? 'ok' : 'error'}">
+      <div class="delivery-result__head">
+        <strong>${escapeHtml(getPlatformLabel(result.platform))}</strong>
+        <span>${result.ok ? 'Delivered' : 'Needs attention'}</span>
+      </div>
+      <p>${escapeHtml(result.message || 'No provider message recorded.')}</p>
+      <small>${escapeHtml(result.accountLabel || result.accountId || 'No account recorded')}${result.remoteId ? ` - ${escapeHtml(result.remoteId)}` : ''}</small>
+    </article>
+  `).join('');
+
+  dom.deliveryRunList.innerHTML = `
+    <section class="delivery-stack">
+      <article class="delivery-summary-card">
+        <div class="delivery-summary-card__head">
+          <div>
+            <p class="eyebrow">Selected post</p>
+            <h3>${escapeHtml(post.title || 'Untitled queue item')}</h3>
+          </div>
+          <span class="queue-card__status status--${escapeHtml(getStatusTone(post.status))}">${escapeHtml(getStatusLabel(post.status))}</span>
+        </div>
+        <div class="delivery-summary-grid">
+          ${renderDeliveryMetric('Latest run', latestRun ? getRunOutcomeLabel(latestRun.outcome) : 'No runs yet', latestRun ? formatDate(latestRun.createdAt) : 'Scheduler has not attempted this post yet')}
+          ${renderDeliveryMetric('Attempts', String(post.attemptCount || 0), post.nextAttemptAt ? `Next retry ${formatDate(post.nextAttemptAt)}` : (post.lastError ? post.lastError : 'No retry scheduled'))}
+          ${renderDeliveryMetric('Published', post.postedAt ? formatDate(post.postedAt) : 'Not posted', post.lastPublishedAt ? `Last publish ${formatDate(post.lastPublishedAt)}` : 'Waiting on a successful run')}
+        </div>
+      </article>
+
+      <section class="delivery-section">
+        <div class="delivery-section__head">
+          <div>
+            <p class="eyebrow">Routes</p>
+            <h3>Account path</h3>
+          </div>
+          <span class="hint">${post.platforms.length} target${post.platforms.length === 1 ? '' : 's'}</span>
+        </div>
+        <div class="delivery-route-grid">
+          ${routeCards || '<div class="empty-state">No routes configured yet.</div>'}
+        </div>
+      </section>
+
+      <section class="delivery-section">
+        <div class="delivery-section__head">
+          <div>
+            <p class="eyebrow">Latest result</p>
+            <h3>Most recent execution</h3>
+          </div>
+          <span class="hint">${latestRun ? escapeHtml(latestRun.summary || 'Scheduler run recorded.') : 'No scheduler run recorded yet.'}</span>
+        </div>
+        <div class="delivery-results-grid">
+          ${latestResults || '<div class="empty-state">No platform-level results yet. Run the scheduler or deliver this post first.</div>'}
+        </div>
+      </section>
+
+      <section class="delivery-section">
+        <div class="delivery-section__head">
+          <div>
+            <p class="eyebrow">Timeline</p>
+            <h3>Run history</h3>
+          </div>
+          <span class="hint">${history.length ? `${history.length} recorded run${history.length === 1 ? '' : 's'}` : 'History appears after the scheduler touches this post.'}</span>
+        </div>
+        <div class="delivery-history-list">
+          ${history.length
+            ? history.map((entry) => renderDeliveryHistoryItem(entry)).join('')
+            : '<div class="empty-state">This post has not gone through a scheduler run yet.</div>'}
+        </div>
+      </section>
+    </section>
+  `;
+}
+
+function renderDeliveryMetric(label, value, detail) {
+  return `
+    <article class="delivery-metric">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+      <small>${escapeHtml(detail)}</small>
+    </article>
+  `;
+}
+
+function renderDeliveryHistoryItem(entry) {
+  const results = Array.isArray(entry.results) ? entry.results : [];
+  return `
+    <article class="delivery-history-item delivery-history-item--${escapeHtml(entry.outcome || 'failed')}">
+      <div class="delivery-history-item__head">
+        <div>
+          <strong>${escapeHtml(getRunOutcomeLabel(entry.outcome))}</strong>
+          <small>${escapeHtml(entry.statusBefore || 'queue')} -> ${escapeHtml(entry.statusAfter || 'queue')}</small>
+        </div>
+        <time>${formatDate(entry.createdAt)}</time>
+      </div>
+      <p>${escapeHtml(entry.summary || entry.reason || 'Scheduler update recorded.')}</p>
+      <div class="delivery-history-item__meta">
+        <span>${entry.attemptCount ? `Attempt ${entry.attemptCount}` : 'First pass'}</span>
+        ${entry.nextAttemptAt ? `<span>Retry ${escapeHtml(formatDate(entry.nextAttemptAt))}</span>` : ''}
+        ${entry.reason && entry.reason !== entry.summary ? `<span>${escapeHtml(entry.reason)}</span>` : ''}
+      </div>
+      ${results.length ? `
+        <div class="delivery-history-item__results">
+          ${results.map((result) => `<span class="delivery-history-chip delivery-history-chip--${result.ok ? 'ok' : 'error'}">${escapeHtml(getPlatformLabel(result.platform))}: ${escapeHtml(result.message)}</span>`).join('')}
+        </div>
+      ` : ''}
+    </article>
+  `;
+}
+
+function getInspectorPost() {
+  return state.posts.find((post) => post.id === state.activePostId) ?? null;
+}
+
+function getRunOutcomeLabel(outcome) {
+  switch (outcome) {
+    case 'posted':
+      return 'Posted';
+    case 'retrying':
+      return 'Retrying';
+    case 'failed':
+      return 'Failed';
+    default:
+      return 'Run logged';
+  }
 }
 
 function renderDraftPersistenceNote() {
@@ -1505,6 +1665,7 @@ function renderQueue() {
     const card = fragment.querySelector('.queue-card');
     const statusElement = fragment.querySelector('.queue-card__status');
     const actionToggle = fragment.querySelector('.action-toggle');
+    const actionReview = fragment.querySelector('.action-review');
     card.dataset.postId = post.id;
     card.classList.toggle('is-active', state.activePostId === post.id);
     statusElement.textContent = getStatusLabel(post.status);
@@ -1520,6 +1681,7 @@ function renderQueue() {
       .join('');
     fragment.querySelector('.queue-card__assets').innerHTML = getAssetSummaryChips(post).join('')
       || '<span class="asset-chip">No assets attached</span>';
+    actionReview.textContent = post.publishHistory?.length ? `Review Runs (${post.publishHistory.length})` : 'Review Runs';
     actionToggle.textContent = getAdvanceButtonLabel(post.status);
     dom.queueList.appendChild(fragment);
   });
@@ -1829,6 +1991,11 @@ function duplicateComposer() {
   post.id = crypto.randomUUID();
   post.title = `${post.title || 'Untitled'} copy`;
   post.status = 'draft';
+  post.attemptCount = 0;
+  post.lastError = '';
+  post.nextAttemptAt = '';
+  post.deliveryResults = [];
+  post.publishHistory = [];
   post.approvedAt = '';
   post.postedAt = '';
   post.lastPublishedAt = '';
@@ -1859,6 +2026,11 @@ async function duplicatePost(postId) {
     id: crypto.randomUUID(),
     title: `${post.title} copy`,
     status: 'draft',
+    attemptCount: 0,
+    lastError: '',
+    nextAttemptAt: '',
+    deliveryResults: [],
+    publishHistory: [],
     approvedAt: '',
     postedAt: '',
     lastPublishedAt: '',
@@ -2178,7 +2350,7 @@ async function handleQueueImport(event) {
 
 function exportQueue() {
   const payload = {
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     posts: state.posts
   };
@@ -2306,11 +2478,12 @@ function loadLayoutPrefs() {
   try {
     const raw = localStorage.getItem(LAYOUT_PREFS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
+    const inspectorTab = INSPECTOR_TABS.includes(parsed.inspectorTab) ? parsed.inspectorTab : 'checks';
     return {
       compact: Boolean(parsed.compact),
       heroCollapsed: Boolean(parsed.heroCollapsed),
       inspectorOpen: parsed.inspectorOpen !== false,
-      inspectorTab: parsed.inspectorTab === 'accounts' ? 'accounts' : 'checks'
+      inspectorTab
     };
   } catch {
     return {

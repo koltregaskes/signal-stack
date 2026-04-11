@@ -601,7 +601,10 @@ h3 {
 .media-list,
 .validation-list,
 .alert-list,
-.activity-list {
+.activity-list,
+.delivery-run-list,
+.delivery-history-list,
+.delivery-results-grid {
   display: grid;
   gap: 14px;
 }
@@ -754,6 +757,144 @@ h3 {
 
 .inspector-panel__head {
   margin-bottom: 2px;
+}
+
+.delivery-stack,
+.delivery-section {
+  display: grid;
+  gap: 14px;
+}
+
+.delivery-section__head,
+.delivery-summary-card__head,
+.delivery-result__head,
+.delivery-history-item__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.delivery-summary-grid,
+.delivery-route-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.delivery-summary-card,
+.delivery-metric,
+.delivery-route-card,
+.delivery-result,
+.delivery-history-item {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.delivery-summary-card {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.delivery-metric,
+.delivery-route-card,
+.delivery-result,
+.delivery-history-item {
+  padding: 14px;
+}
+
+.delivery-metric span,
+.delivery-route-card__platform,
+.delivery-result span,
+.delivery-history-item time,
+.delivery-history-item small,
+.delivery-history-item__meta span,
+.delivery-metric small,
+.delivery-route-card small,
+.delivery-result small {
+  color: var(--muted);
+}
+
+.delivery-metric strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+.delivery-route-card {
+  display: grid;
+  gap: 6px;
+}
+
+.delivery-route-card__platform {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+.delivery-results-grid {
+  grid-template-columns: 1fr;
+}
+
+.delivery-result {
+  display: grid;
+  gap: 10px;
+}
+
+.delivery-result--ok,
+.delivery-history-item--posted {
+  border-color: rgba(103, 243, 200, 0.24);
+}
+
+.delivery-result--error,
+.delivery-history-item--failed {
+  border-color: rgba(255, 114, 137, 0.26);
+}
+
+.delivery-history-item--retrying {
+  border-color: rgba(255, 209, 102, 0.26);
+}
+
+.delivery-result p,
+.delivery-history-item p {
+  margin: 0;
+}
+
+.delivery-history-item {
+  display: grid;
+  gap: 10px;
+}
+
+.delivery-history-item__meta,
+.delivery-history-item__results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.delivery-history-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.delivery-history-chip--ok {
+  border-color: rgba(103, 243, 200, 0.24);
+  color: var(--mint);
+}
+
+.delivery-history-chip--error {
+  border-color: rgba(255, 114, 137, 0.24);
+  color: #ffb2bf;
 }
 
 .field,
@@ -1258,6 +1399,8 @@ h3 {
 .platform-option__box,
 .account-card,
 .alert-item,
+.delivery-result,
+.delivery-history-item,
 .link-button {
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
 }
@@ -1296,6 +1439,8 @@ h3 {
 .platform-option:hover .platform-option__box,
 .account-card:hover,
 .alert-item:hover,
+.delivery-result:hover,
+.delivery-history-item:hover,
 .link-button:hover {
   transform: translateY(-1px);
   border-color: var(--line-strong);
@@ -1762,6 +1907,11 @@ h3 {
 .layout--compact .account-card,
 .layout--compact .alert-item,
 .layout--compact .activity-item,
+.layout--compact .delivery-summary-card,
+.layout--compact .delivery-metric,
+.layout--compact .delivery-route-card,
+.layout--compact .delivery-result,
+.layout--compact .delivery-history-item,
 .layout--compact .metric-card,
 .layout--compact .validation-item,
 .layout--compact .day-column,
@@ -1823,6 +1973,8 @@ h3 {
   .intel-grid,
   .dialog__fields--grid,
   .hero__metrics,
+  .delivery-summary-grid,
+  .delivery-route-grid,
   .target-grid,
   .target-card__grid,
   .target-card__grid--dense,

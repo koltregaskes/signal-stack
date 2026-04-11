@@ -10,8 +10,8 @@
   />
   <meta name="theme-color" content="#0a0c0f" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260409f" />
-  <link rel="stylesheet" href="styles.css?v=20260409f" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260411b" />
+  <link rel="stylesheet" href="styles.css?v=20260411b" />
 </head>
 <body>
   <div class="background" aria-hidden="true">
@@ -299,11 +299,12 @@
         <div class="panel-head panel-head--stack inspector-card__head">
           <div>
             <p class="eyebrow">Inspector</p>
-            <h2>Checks and routing</h2>
+            <h2>Checks, runs, and routing</h2>
             <p class="hint">Keep this dock open while planning, or slide it away when you just want the stage.</p>
           </div>
           <div class="view-toggle inspector-tabs" role="tablist" aria-label="Inspector sections">
             <button id="inspectorChecksTabBtn" class="button button--ghost" type="button" role="tab" aria-controls="inspectorChecksPanel" aria-selected="true">Checks</button>
+            <button id="inspectorDeliveryTabBtn" class="button button--ghost" type="button" role="tab" aria-controls="inspectorDeliveryPanel" aria-selected="false">Runs</button>
             <button id="inspectorAccountsTabBtn" class="button button--ghost" type="button" role="tab" aria-controls="inspectorAccountsPanel" aria-selected="false">Accounts</button>
           </div>
         </div>
@@ -311,6 +312,17 @@
         <section id="inspectorChecksPanel" class="inspector-panel inspector-panel--active" role="tabpanel" aria-labelledby="inspectorChecksTabBtn">
           <div id="validationSummary" class="validation-summary"></div>
           <ul id="validationList" class="validation-list"></ul>
+        </section>
+
+        <section id="inspectorDeliveryPanel" class="inspector-panel" role="tabpanel" aria-labelledby="inspectorDeliveryTabBtn" hidden>
+          <div class="panel-head panel-head--stack inspector-panel__head">
+            <div>
+              <p class="eyebrow">Delivery</p>
+              <h3>Execution history</h3>
+              <p class="hint">Review the latest route, dry-run evidence, failures, retries, and per-platform results for the selected post.</p>
+            </div>
+          </div>
+          <div id="deliveryRunList" class="delivery-run-list"></div>
         </section>
 
         <section id="inspectorAccountsPanel" class="inspector-panel" role="tabpanel" aria-labelledby="inspectorAccountsTabBtn" hidden>
@@ -381,7 +393,7 @@
             <p class="eyebrow">Activity</p>
             <h2>Delivery log</h2>
           </div>
-          <p class="hint">Recent successful publishes and scheduler runs.</p>
+          <p class="hint">Recent publishes, retries, failures, and scheduler runs.</p>
         </div>
         <div id="activityList" class="activity-list"></div>
       </section>
@@ -498,6 +510,7 @@
       <div class="queue-card__assets"></div>
       <div class="queue-card__actions">
         <button class="button button--ghost action-load" type="button">Load</button>
+        <button class="button button--ghost action-review" type="button">Review Runs</button>
         <button class="button button--ghost action-duplicate" type="button">Duplicate</button>
         <button class="button button--ghost action-route" type="button">Move Targets</button>
         <button class="button button--ghost action-toggle" type="button">Advance Stage</button>
@@ -506,6 +519,6 @@
     </article>
   </template>
 
-  <script type="module" src="app.js?v=20260409f"></script>
+  <script type="module" src="app.js?v=20260411b"></script>
 </body>
 </html>

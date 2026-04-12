@@ -25,6 +25,7 @@ import {
   countPrimaryAssetSlots,
   createDefaultPlatformSettings,
   createEmptyPost,
+  describeRouteReadiness,
   getEffectiveTargetTitle,
   normaliseAccount,
   normaliseHashtagString,
@@ -984,6 +985,17 @@ function renderDeliveryInspector() {
       </article>
     `;
   }).join('');
+  const routeReadinessEntries = post.platforms.map((platform) => ({
+    platform,
+    readiness: describeRouteReadiness(post, platform, {
+      accounts: state.accounts,
+      envStatus: state.config.envStatus
+    })
+  }));
+  const readinessSummary = routeReadinessEntries.reduce((summary, entry) => {
+    summary[entry.readiness.level] += 1;
+    return summary;
+  }, { ready: 0, warning: 0, blocked: 0 });
 
   const latestResults = (latestRun?.results || post.deliveryResults || []).map((result) => `
     <article class="delivery-result delivery-result--${result.ok ? 'ok' : 'error'}">
@@ -1029,6 +1041,21 @@ function renderDeliveryInspector() {
       <section class="delivery-section">
         <div class="delivery-section__head">
           <div>
+            <p class="eyebrow">Readiness</p>
+            <h3>Launch truth</h3>
+          </div>
+          <span class="hint">${readinessSummary.ready} ready | ${readinessSummary.blocked} blocked</span>
+        </div>
+        <div class="delivery-readiness-grid">
+          ${routeReadinessEntries.length
+            ? routeReadinessEntries.map(({ platform, readiness }) => renderRouteReadinessCard(platform, readiness)).join('')
+            : '<div class="empty-state">No platform readiness to report yet.</div>'}
+        </div>
+      </section>
+
+      <section class="delivery-section">
+        <div class="delivery-section__head">
+          <div>
             <p class="eyebrow">Latest result</p>
             <h3>Most recent execution</h3>
           </div>
@@ -1054,6 +1081,22 @@ function renderDeliveryInspector() {
         </div>
       </section>
     </section>
+  `;
+}
+
+function renderRouteReadinessCard(platform, readiness) {
+  const accountLabel = readiness.account?.label || 'No route selected';
+  const handleLabel = readiness.account?.handle || readiness.detail;
+  return `
+    <article class="delivery-route-card delivery-route-card--${escapeHtml(readiness.level)}">
+      <div class="delivery-readiness-head">
+        <span class="delivery-route-card__platform">${escapeHtml(getPlatformLabel(platform))}</span>
+        <span class="delivery-readiness-badge delivery-readiness-badge--${escapeHtml(readiness.level)}">${escapeHtml(readiness.statusLabel)}</span>
+      </div>
+      <strong>${escapeHtml(accountLabel)}</strong>
+      <p>${escapeHtml(readiness.message)}</p>
+      <small>${escapeHtml(handleLabel)}</small>
+    </article>
   `;
 }
 

@@ -223,22 +223,12 @@ export function validatePost(post, context = {}) {
     const target = getPlatformTarget(post, platformKey);
     const effectiveTitle = getEffectiveTargetTitle(post, platformKey);
 
-    if (!account) {
-      checks.push(blocked(`${platform.label} account missing`, `Choose an account target for ${platform.label} before launch.`));
-    } else if (account.status === 'paused') {
-      checks.push(blocked(`${platform.label} account paused`, `${account.label} is paused and will not receive scheduled posts.`));
-    } else if (account.mode === 'api' && !envStatus[platformKey]?.appReady) {
-      checks.push(blocked(`${platform.label} API not ready`, `This account is set to Live API but the required app keys are not configured.`));
-    } else if (account.mode === 'api' && !envStatus[platformKey]?.secureStorageReady) {
-      checks.push(blocked(`${platform.label} secure storage`, `Set SESSION_SECRET and TOKEN_ENCRYPTION_KEY before connecting ${platform.label} in Live API mode.`));
-    } else if (account.mode === 'api' && account.authStatus !== 'connected') {
-      checks.push(blocked(`${platform.label} auth required`, `Reconnect ${account.label} before using Live API mode for ${platform.label}.`));
-    } else if (account.mode === 'api' && platform.requiredCapability && !account.capabilities?.includes(platform.requiredCapability)) {
-      checks.push(blocked(`${platform.label} capability missing`, `${account.label} is connected, but it does not currently advertise ${platform.label} publishing capability.`));
-    } else {
-      const modeLabel = account.mode === 'api' ? 'Live API' : 'Dry run';
-      checks.push(ready(`${platform.label} route set`, `${account.label} will receive this post in ${modeLabel} mode.`));
-    }
+    const routeReadiness = describeRouteReadiness(post, platformKey, { accounts, envStatus });
+    checks.push({
+      level: routeReadiness.level,
+      label: routeReadiness.label,
+      message: routeReadiness.message
+    });
 
     if (platform.requiresMedia && mediaCount < 1) {
       checks.push(blocked(`${platform.label} needs media`, 'Attach at least one image or video asset to publish cleanly.'));
@@ -380,6 +370,111 @@ export function resolveAccount(post, platformKey, accounts = []) {
   return accounts.find((account) => account.platform === platformKey && account.isDefault)
     ?? accounts.find((account) => account.platform === platformKey)
     ?? null;
+}
+
+export function describeRouteReadiness(post, platformKey, context = {}) {
+  const platform = platformCatalog[platformKey];
+  const accounts = Array.isArray(context.accounts) ? context.accounts : [];
+  const envStatus = context.envStatus ?? {};
+  const account = resolveAccount(post, platformKey, accounts);
+  const envEntry = envStatus[platformKey] || {};
+
+  if (!platform) {
+    return {
+      level: 'blocked',
+      label: 'Unsupported platform',
+      message: `Signal Stack does not currently recognise ${platformKey} as a supported destination.`,
+      statusLabel: 'Unsupported',
+      detail: 'No platform definition is available.',
+      account: null
+    };
+  }
+
+  if (!account) {
+    return {
+      level: 'blocked',
+      label: `${platform.label} account missing`,
+      message: `Choose an account target for ${platform.label} before launch.`,
+      statusLabel: 'Route missing',
+      detail: 'No account is selected for this platform.',
+      account: null
+    };
+  }
+
+  if (account.status === 'paused') {
+    return {
+      level: 'blocked',
+      label: `${platform.label} account paused`,
+      message: `${account.label} is paused and will not receive scheduled posts.`,
+      statusLabel: 'Paused',
+      detail: `${account.handle} is paused.`,
+      account
+    };
+  }
+
+  if (account.mode === 'dry-run') {
+    return {
+      level: 'ready',
+      label: `${platform.label} route set`,
+      message: `${account.label} will receive this post in Dry run mode.`,
+      statusLabel: 'Dry run ready',
+      detail: `${account.handle} will simulate delivery.`,
+      account
+    };
+  }
+
+  if (!envEntry.appReady) {
+    return {
+      level: 'blocked',
+      label: `${platform.label} API not ready`,
+      message: 'This account is set to Live API but the required app keys are not configured.',
+      statusLabel: 'App keys missing',
+      detail: 'Required platform keys are not configured yet.',
+      account
+    };
+  }
+
+  if (!envEntry.secureStorageReady) {
+    return {
+      level: 'blocked',
+      label: `${platform.label} secure storage`,
+      message: `Set SESSION_SECRET and TOKEN_ENCRYPTION_KEY before connecting ${platform.label} in Live API mode.`,
+      statusLabel: 'Secure storage missing',
+      detail: 'Session and token encryption settings are not ready.',
+      account
+    };
+  }
+
+  if (account.authStatus !== 'connected') {
+    return {
+      level: 'blocked',
+      label: `${platform.label} auth required`,
+      message: `Reconnect ${account.label} before using Live API mode for ${platform.label}.`,
+      statusLabel: account.authStatus === 'needs_reauth' ? 'Reconnect required' : 'Auth required',
+      detail: account.lastAuthError || `${account.handle} is not connected.`,
+      account
+    };
+  }
+
+  if (platform.requiredCapability && !account.capabilities?.includes(platform.requiredCapability)) {
+    return {
+      level: 'blocked',
+      label: `${platform.label} capability missing`,
+      message: `${account.label} is connected, but it does not currently advertise ${platform.label} publishing capability.`,
+      statusLabel: 'Capability missing',
+      detail: `${platform.label} publishing is not confirmed on this account.`,
+      account
+    };
+  }
+
+  return {
+    level: 'ready',
+    label: `${platform.label} route set`,
+    message: `${account.label} will receive this post in Live API mode.`,
+    statusLabel: 'Live API ready',
+    detail: `${account.handle} is connected and publish-ready.`,
+    account
+  };
 }
 
 export function getPlatformTarget(post, platformKey) {

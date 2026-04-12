@@ -776,7 +776,8 @@ h3 {
 }
 
 .delivery-summary-grid,
-.delivery-route-grid {
+.delivery-route-grid,
+.delivery-readiness-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -830,10 +831,61 @@ h3 {
   gap: 6px;
 }
 
+.delivery-route-card p {
+  margin: 0;
+}
+
 .delivery-route-card__platform {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.72rem;
+}
+
+.delivery-readiness-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.delivery-readiness-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.delivery-readiness-badge--ready {
+  border-color: rgba(103, 243, 200, 0.24);
+  color: #bef8e8;
+}
+
+.delivery-readiness-badge--warning {
+  border-color: rgba(255, 209, 102, 0.26);
+  color: #ffe5a6;
+}
+
+.delivery-readiness-badge--blocked {
+  border-color: rgba(255, 114, 137, 0.26);
+  color: #ffced8;
+}
+
+.delivery-route-card--ready {
+  border-color: rgba(103, 243, 200, 0.24);
+}
+
+.delivery-route-card--warning {
+  border-color: rgba(255, 209, 102, 0.26);
+}
+
+.delivery-route-card--blocked {
+  border-color: rgba(255, 114, 137, 0.26);
 }
 
 .delivery-results-grid {

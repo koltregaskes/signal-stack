@@ -2,6 +2,7 @@
 
 - **The page opens but says static preview mode**: the backend is not running. Start `node server.mjs` or use `start.cmd`.
 - **Port 8032 is already in use**: stop the process on that port or set `PORT` in `.env` before starting the app.
+- **The studio is reachable on the wrong network**: keep `APP_HOST=127.0.0.1` for local-only use, or start it with `start-tailscale.cmd <your-tailscale-ip>` for private tailnet access. Avoid binding it to all interfaces.
 - **A post shows blocked media checks**: attach at least one asset for media-first platforms like Instagram, TikTok, Shorts, and YouTube.
 - **TikTok or YouTube keeps showing blocked checks in the validation rail**: open the platform target card and fill the privacy / audience / consent fields that are now required before approval or scheduling.
 - **A post cannot be dropped onto another day**: the move is being blocked by a collision or cadence rule on the target account.

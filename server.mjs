@@ -68,7 +68,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(runtimeConfig.port, () => {
+server.listen(runtimeConfig.port, runtimeConfig.host, () => {
   console.log(`Signal Stack running on ${runtimeConfig.baseUrl}`);
 });
 

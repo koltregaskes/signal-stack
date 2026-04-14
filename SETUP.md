@@ -6,6 +6,12 @@
 2. Run `start.cmd`.
 3. The app opens at `http://127.0.0.1:8032/`.
 
+For private cross-device access over Tailscale, start it with your tailnet IP instead:
+
+```powershell
+start-tailscale.cmd 100.x.y.z
+```
+
 You can also run it manually:
 
 ```powershell
@@ -38,6 +44,7 @@ Notes:
 - `TOKEN_ENCRYPTION_KEY` must be a 32-byte value. The app accepts either 64 hex characters or base64/base64url that decodes to 32 bytes.
 - `MEDIA_SIGNING_SECRET` signs short-lived public media URLs for providers such as TikTok that fetch files from your domain. If omitted, the app falls back to `SESSION_SECRET`, but a dedicated value is better for production.
 - `APP_BASE_URL` should be your real HTTPS app URL before you attempt live OAuth with Instagram, TikTok, or YouTube.
+- `APP_HOST` controls which network interface the local server binds to. Leave it at `127.0.0.1` for local-only use, or set it to your Tailscale IP if you intentionally want private tailnet access.
 
 ## Docker
 

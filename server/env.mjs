@@ -44,9 +44,14 @@ export function loadEnv() {
 
 export function getRuntimeConfig() {
   loadEnv();
+  const port = Number(process.env.PORT || 8032);
+  const host = process.env.APP_HOST || process.env.HOST || '127.0.0.1';
+  const publicHost = process.env.APP_PUBLIC_HOST || (host === '0.0.0.0' ? '127.0.0.1' : host);
+
   return {
-    port: Number(process.env.PORT || 8032),
-    baseUrl: process.env.APP_BASE_URL || `http://127.0.0.1:${process.env.PORT || 8032}`,
+    port,
+    host,
+    baseUrl: process.env.APP_BASE_URL || `http://${publicHost}:${port}`,
     defaultPublishMode: process.env.DEFAULT_PUBLISH_MODE === 'api' ? 'api' : 'dry-run',
     alertWebhookUrl: process.env.ALERT_WEBHOOK_URL || '',
     maxAutoRetries: Math.max(1, Number(process.env.MAX_AUTO_RETRIES || 3)),

@@ -7,6 +7,7 @@ It is built for the gap between text-first schedulers and the real work of plann
 ## Quick links
 - [Architecture overview](ARCHITECTURE.md)
 - [Platform API research](PLATFORM-API-RESEARCH.md)
+- [Midnight Signal release cockpit demo](RELEASE-COCKPIT-DEMO.md)
 - [Tools Manager status](TOOLS-MANAGER-STATUS.md)
 - [Setup guide](SETUP.md)
 - [Usage notes](USAGE.md)

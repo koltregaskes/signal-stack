@@ -1,14 +1,14 @@
 # Tools Manager Status
 
-Updated: 2026-04-14
+Updated: 2026-05-02
 Tool: Signal Stack
 Slug: `signal-stack`
 Owner session: `signal-stack-session`
 
 ## Current State
 - RAG: `Amber`
-- Completion: `89%`
-- Phase: `execution-pass-complete`
+- Completion: `93%`
+- Phase: `release-cockpit-demo-ready`
 - Install or build state: Local-first Node app + offline web studio + dry-run scheduler + explicit host binding
 - Last reviewed: `2026-04-14`
 
@@ -29,6 +29,11 @@ Owner session: `signal-stack-session`
   - backend now binds to an explicit host instead of opening all interfaces by default
   - `start.cmd` keeps the studio localhost-only for normal use
   - new `start-tailscale.cmd` makes private tailnet access explicit when cross-device access is wanted
+- New launch-to-revenue proof:
+  - `Midnight Signal Vol. 001 - Rain Grid` is now the narrow release-cockpit demo story
+  - new importable queue at `demo/midnight-signal-release-cockpit.queue.json`
+  - new demo guide at `RELEASE-COCKPIT-DEMO.md`
+  - seeded fresh installs with the four-step cockpit path: idea, asset pack, hero release metadata, and capture CTA
 
 ## Top 5 Risks / Gaps
 - Live publishing for `Instagram`, `TikTok`, and `YouTube/Shorts` is still not real end to end because platform credentials, OAuth, and approval are external blockers.
@@ -37,11 +42,13 @@ Owner session: `signal-stack-session`
 - Local JSON + local uploads are honest and launchable for a creator desktop workflow, but they are not yet hardened for multi-user hosted production.
 - Some platform rules remain conservative warnings rather than hard verified constraints, which is correct for honesty but still leaves product judgement in the loop.
 - Tailnet access is now intentional rather than accidental, but the wider Windows listener posture still depends on machine-level policy outside this repo.
+- Demo asset paths reference planned/generated media-pack artefacts; the demo is honest release-packaging proof, not proof that the final audio/video/still files have all been rendered.
 
 ## Execution Pass
 - Chosen chunk: make connector readiness explicit in the delivery inspector instead of forcing operators to guess from badges and generic checks.
 - Executed chunk: locked the backend to an explicit bind host and added a dedicated Tailscale launch path.
 - Outcome: Signal Stack can stay localhost-only by default and still be exposed deliberately over Tailscale without reopening itself to every interface.
+- Launch-to-revenue outcome: Signal Stack can now be presented as a faceless studio release cockpit using the Midnight Signal Vol. 001 proof.
 
 ## Evidence
 - `node --check web/app.js`
@@ -54,8 +61,12 @@ Owner session: `signal-stack-session`
 - Route checks:
   - `GET /api/health -> 200`
   - `GET /api/bootstrap -> 200`
-  - `GET /web/ -> 200`
-  - live service restarted on `http://100.119.231.37:8044`
+- `GET /web/ -> 200`
+- live service restarted on `http://100.119.231.37:8044`
+- Release cockpit artefacts:
+  - `RELEASE-COCKPIT-DEMO.md`
+  - `demo/midnight-signal-release-cockpit.queue.json`
+  - private AW2 Website Manager handoff: `HANDOFF-WEBSITE-MANAGER-SIGNAL-STACK-RELEASE-COCKPIT-DEMO-2026-05-02.md`
 - Browser evidence:
   - isolated headless Edge verification used a dedicated temporary automation profile, not the live personal profile
   - the `Runs` panel now shows a `Launch truth` section
@@ -67,13 +78,16 @@ Owner session: `signal-stack-session`
 - Real Instagram publish connector completion
 - TikTok draft/direct connector completion with honest review constraints
 - Better committed UI smoke coverage for run-history and routing flows
+- Website Manager screenshot capture and public-safe CTA implementation
 
 ## Blockers
 - External only: platform app credentials, OAuth setup, and provider review/approval for live publishing.
+- Not blocked for demo: YouTube auth, checkout activation, and external posting are deliberately out of scope.
 
 ## Next Actions
-- Highest-value next product chunk: finish the `YouTube / Shorts` live connector end to end, because it has the clearest official path and the current app already collects the needed target metadata.
-- After that: Instagram live publish path, then TikTok draft-first.
+- Website Manager: turn the Rain Grid release-cockpit story into a launch CTA using public-safe screenshots or redacted mock screenshots.
+- Tools Manager: keep Signal Stack narrow as the faceless studio release cockpit and avoid broad creator-suite scope creep.
+- Later only: finish the `YouTube / Shorts` live connector once credentials are available.
 
 ## Dependencies
 - None
@@ -87,9 +101,9 @@ Owner session: `signal-stack-session`
 - RELEASE-STATUS.md
 
 ## Durable Handoff
-- Outcome: the studio no longer needs to bind to every interface just to support private cross-device access.
-- Risk: live connector work is still externally blocked, and machine-level listener policy still needs separate hardening.
-- Next action: wire the real `YouTube / Shorts` connector once credentials are available, while keeping the explicit-host launch model.
+- Outcome: the studio now has a real launch-to-revenue demo path for `Midnight Signal Vol. 001 - Rain Grid`.
+- Risk: media files are still planned/generated handoff references, so the public page should sell the cockpit proof and demand-capture story rather than imply finished downloadable assets.
+- Next action: Website Manager turns the handoff into a public-safe CTA section; Tools Manager keeps live posting and checkout inactive until external gates are cleared.
 
 ## Notes
 - This is the standard repo-root manager snapshot for the Tools side.

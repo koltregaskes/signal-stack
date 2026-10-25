@@ -477,6 +477,40 @@ export function describeRouteReadiness(post, platformKey, context = {}) {
   };
 }
 
+export function buildReadinessHistoryEntry(post, context = {}, createdAt = new Date().toISOString()) {
+  const platforms = Array.isArray(post.platforms) ? post.platforms : [];
+  const entries = platforms.map((platform) => ({
+    platform,
+    readiness: describeRouteReadiness(post, platform, context)
+  }));
+  const ready = entries.filter((entry) => entry.readiness.level === 'ready').length;
+  const warning = entries.filter((entry) => entry.readiness.level === 'warning').length;
+  const blocked = entries.filter((entry) => entry.readiness.level === 'blocked').length;
+
+  return {
+    id: crypto.randomUUID(),
+    createdAt,
+    outcome: 'readiness',
+    statusBefore: typeof post.status === 'string' ? post.status : '',
+    statusAfter: typeof post.status === 'string' ? post.status : '',
+    summary: 'Readiness check only. No platform was called and the post status did not change.',
+    reason: platforms.length
+      ? `${ready} ready, ${warning} warning, ${blocked} blocked.`
+      : 'No platform routes are configured.',
+    nextAttemptAt: '',
+    attemptCount: Math.max(0, Number(post.attemptCount || 0)),
+    results: entries.map(({ platform, readiness }) => ({
+      platform,
+      ok: readiness.level !== 'blocked',
+      remoteId: '',
+      message: `${readiness.statusLabel}. ${readiness.message}`,
+      accountId: readiness.account?.id || '',
+      accountLabel: readiness.account?.label || '',
+      attemptedAt: createdAt
+    }))
+  };
+}
+
 export function getPlatformTarget(post, platformKey) {
   const target = post.platformTargets?.[platformKey];
   return target && typeof target === 'object'

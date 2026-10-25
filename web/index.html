@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#0a0c0f" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="manifest.webmanifest?v=20260411b" />
-  <link rel="stylesheet" href="styles.css?v=20260411b" />
+  <link rel="stylesheet" href="styles.css?v=20261025a" />
 </head>
 <body>
   <div class="background" aria-hidden="true">
@@ -319,8 +319,9 @@
             <div>
               <p class="eyebrow">Delivery</p>
               <h3>Execution history</h3>
-              <p class="hint">Review the latest route, dry-run evidence, failures, retries, and per-platform results for the selected post.</p>
+              <p class="hint">Review the latest route, dry-run evidence, failures, retries, and per-platform results. Record readiness stores the current launch truth and does not call a platform.</p>
             </div>
+            <button id="recordReadinessBtn" class="button button--ghost" type="button">Record readiness</button>
           </div>
           <div id="deliveryRunList" class="delivery-run-list"></div>
         </section>
@@ -519,6 +520,6 @@
     </article>
   </template>
 
-  <script type="module" src="app.js?v=20260411b"></script>
+  <script type="module" src="app.js?v=20261025b"></script>
 </body>
 </html>

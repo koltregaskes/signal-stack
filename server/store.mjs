@@ -24,7 +24,7 @@ export async function initialiseStore(envStatus) {
     memoryState = hydrateState(parsed, envStatus);
   } catch {
     memoryState = hydrateState(createSeedState(getRuntimeConfig()), envStatus);
-    await persistState();
+    await persistStateLocked();
   }
 
   return memoryState;

@@ -22,7 +22,7 @@
 8. Use the week or month calendar to rebalance timing and spacing.
 9. Watch the validation rail for blocked items and warnings.
 10. Let the scheduler move successful deliveries into `Posted`.
-11. Use `Review Runs` on any queue card, or switch the inspector to `Runs`, to see the latest provider message, chosen account route, and the post-level run timeline.
+11. Use `Review Runs` on any queue card, or switch the inspector to `Runs`, to see the latest provider message, chosen account route, and the post-level run timeline. `Record readiness` writes that launch truth onto the timeline without calling a platform or changing the post status.
 
 ## Accounts
 

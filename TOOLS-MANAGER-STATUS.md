@@ -1,6 +1,6 @@
 # Tools Manager Status
 
-Updated: 2026-05-02
+Updated: 2026-10-25
 Tool: Signal Stack
 Slug: `signal-stack`
 Owner session: `signal-stack-session`
@@ -10,7 +10,7 @@ Owner session: `signal-stack-session`
 - Completion: `93%`
 - Phase: `release-cockpit-demo-ready`
 - Install or build state: Local-first Node app + offline web studio + dry-run scheduler + explicit host binding
-- Last reviewed: `2026-04-14`
+- Last reviewed: `2026-10-25`
 
 ## Shipped
 - Real creator pipeline: `idea -> draft -> approved -> scheduled -> posted`
@@ -37,7 +37,7 @@ Owner session: `signal-stack-session`
 
 ## Top 5 Risks / Gaps
 - Live publishing for `Instagram`, `TikTok`, and `YouTube/Shorts` is still not real end to end because platform credentials, OAuth, and approval are external blockers.
-- Existing seeded/local posts created before this pass do not automatically have historical run timelines until the scheduler touches them again.
+- Seeded posts still do not invent delivery history. Operators can record a readiness check, which stores launch truth without calling a platform or changing status. Scheduler runs remain the only delivery history.
 - Tests are still strongest around validation and scheduler logic; there is not yet automated browser coverage for the new inspector flow.
 - Local JSON + local uploads are honest and launchable for a creator desktop workflow, but they are not yet hardened for multi-user hosted production.
 - Some platform rules remain conservative warnings rather than hard verified constraints, which is correct for honesty but still leaves product judgement in the loop.
@@ -57,7 +57,9 @@ Owner session: `signal-stack-session`
 - `node --check server/connectors.mjs`
 - `node --check server/env.mjs`
 - `node --check server.mjs`
-- `node --test`
+- `node --test` (8 passing, including the readiness-history case)
+- Fresh-install seed now calls `persistStateLocked`, so a checkout without `.local/data/app-state.json` can start
+- Browser smoke on `http://127.0.0.1:8032/web/`: Record readiness on the seeded idea kept status `Idea` and wrote a dry-run route check with no platform call
 - Route checks:
   - `GET /api/health -> 200`
   - `GET /api/bootstrap -> 200`
@@ -77,7 +79,8 @@ Owner session: `signal-stack-session`
 - Real YouTube/Shorts live connector completion
 - Real Instagram publish connector completion
 - TikTok draft/direct connector completion with honest review constraints
-- Better committed UI smoke coverage for run-history and routing flows
+- Better committed browser coverage for the readiness-record flow
+- Delivery history still comes only from the scheduler; readiness records are checks, not posts
 - Website Manager screenshot capture and public-safe CTA implementation
 
 ## Blockers

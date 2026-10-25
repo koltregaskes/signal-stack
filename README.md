@@ -30,7 +30,7 @@ It is built for the gap between text-first schedulers and the real work of plann
 - Account routing, including moving a post to another X account
 - Local draft persistence in the browser plus JSON import/export for the pipeline
 - Retry and alert rail for scheduled delivery issues
-- Per-post delivery inspector with route summaries, latest result snapshots, and publish history
+- Per-post delivery inspector with route summaries, latest result snapshots, publish history, and a readiness record that does not call a platform
 - Offline-first shell caching without external font dependencies
 - Docker scaffold and `.env.example` for live connector setup
 

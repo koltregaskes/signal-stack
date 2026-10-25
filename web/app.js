@@ -25,6 +25,7 @@ import {
   countPrimaryAssetSlots,
   createDefaultPlatformSettings,
   createEmptyPost,
+  buildReadinessHistoryEntry,
   describeRouteReadiness,
   getEffectiveTargetTitle,
   normaliseAccount,
@@ -32,7 +33,7 @@ import {
   normalisePost,
   summariseChecks,
   validatePost
-} from '../shared/validation.js?v=20260411a';
+} from '../shared/validation.js?v=20261025a';
 const CACHE_KEY = 'signal-stack-cache-v4';
 const LOCAL_DRAFT_KEY = 'signal-stack-composer-draft-v1';
 const LAYOUT_PREFS_KEY = 'signal-stack-layout-v1';
@@ -197,6 +198,7 @@ const dom = {
   validationSummary: document.getElementById('validationSummary'),
   validationList: document.getElementById('validationList'),
   deliveryRunList: document.getElementById('deliveryRunList'),
+  recordReadinessBtn: document.getElementById('recordReadinessBtn'),
   accountGrid: document.getElementById('accountGrid'),
   queueList: document.getElementById('queueList'),
   calendarGrid: document.getElementById('calendarGrid'),
@@ -296,6 +298,9 @@ function attachEvents() {
     renderCalendar();
   });
   dom.runDueBtn.addEventListener('click', runDueNow);
+  dom.recordReadinessBtn.addEventListener('click', () => {
+    recordReadinessCheck();
+  });
   dom.manageAccountsBtn.addEventListener('click', () => dom.accountDialog.showModal());
   dom.openAccountCreateBtn.addEventListener('click', () => openAccountDialog());
   dom.logoutBtn.addEventListener('click', logoutSession);
@@ -1059,7 +1064,7 @@ function renderDeliveryInspector() {
             <p class="eyebrow">Latest result</p>
             <h3>Most recent execution</h3>
           </div>
-          <span class="hint">${latestRun ? escapeHtml(latestRun.summary || 'Scheduler run recorded.') : 'No scheduler run recorded yet.'}</span>
+          <span class="hint">${latestRun ? escapeHtml(latestRun.outcome === 'readiness' ? 'Latest entry is a readiness check. No platform was called.' : (latestRun.summary || 'Scheduler run recorded.')) : 'No scheduler run recorded yet.'}</span>
         </div>
         <div class="delivery-results-grid">
           ${latestResults || '<div class="empty-state">No platform-level results yet. Run the scheduler or deliver this post first.</div>'}
@@ -1072,12 +1077,12 @@ function renderDeliveryInspector() {
             <p class="eyebrow">Timeline</p>
             <h3>Run history</h3>
           </div>
-          <span class="hint">${history.length ? `${history.length} recorded run${history.length === 1 ? '' : 's'}` : 'History appears after the scheduler touches this post.'}</span>
+          <span class="hint">${history.length ? `${history.length} recorded run${history.length === 1 ? '' : 's'}` : 'Record readiness, or wait for the scheduler to touch this post.'}</span>
         </div>
         <div class="delivery-history-list">
           ${history.length
             ? history.map((entry) => renderDeliveryHistoryItem(entry)).join('')
-            : '<div class="empty-state">This post has not gone through a scheduler run yet.</div>'}
+            : '<div class="empty-state">No timeline yet. Record readiness to capture the current routes without sending anything.</div>'}
         </div>
       </section>
     </section>
@@ -1123,7 +1128,7 @@ function renderDeliveryHistoryItem(entry) {
       </div>
       <p>${escapeHtml(entry.summary || entry.reason || 'Scheduler update recorded.')}</p>
       <div class="delivery-history-item__meta">
-        <span>${entry.attemptCount ? `Attempt ${entry.attemptCount}` : 'First pass'}</span>
+        <span>${entry.outcome === 'readiness' ? 'Check only' : (entry.attemptCount ? `Attempt ${entry.attemptCount}` : 'First pass')}</span>
         ${entry.nextAttemptAt ? `<span>Retry ${escapeHtml(formatDate(entry.nextAttemptAt))}</span>` : ''}
         ${entry.reason && entry.reason !== entry.summary ? `<span>${escapeHtml(entry.reason)}</span>` : ''}
       </div>
@@ -1148,8 +1153,39 @@ function getRunOutcomeLabel(outcome) {
       return 'Retrying';
     case 'failed':
       return 'Failed';
+    case 'readiness':
+      return 'Readiness check';
     default:
       return 'Run logged';
+  }
+}
+
+async function recordReadinessCheck() {
+  const source = getInspectorPost();
+  if (!source) {
+    showBanner('Load a queue item before recording readiness.');
+    return;
+  }
+
+  const createdAt = new Date().toISOString();
+  const entry = buildReadinessHistoryEntry(source, {
+    accounts: state.accounts,
+    envStatus: state.config.envStatus
+  }, createdAt);
+  const post = {
+    ...source,
+    publishHistory: [entry, ...(Array.isArray(source.publishHistory) ? source.publishHistory : [])].slice(0, 20),
+    updatedAt: createdAt
+  };
+
+  try {
+    await savePostObject(post);
+    if (state.ui.inspectorTab !== 'delivery') {
+      switchInspectorTab('delivery');
+    }
+    showBanner('Recorded a readiness check. No platform was called.');
+  } catch (error) {
+    showBanner(error instanceof Error ? error.message : 'Could not record the readiness check.');
   }
 }
 

@@ -10,6 +10,7 @@
 - **I uploaded music but the post is still blocked**: audio assets are stored as soundtrack references, not as standalone publish media. Add an image or video too.
 - **The checks or accounts panel is gone**: toggle `Inspector` back on in the composer header. Layout preferences persist locally, so the studio reopens the way you last left it.
 - **I ran the scheduler but want proof of what happened**: use `Review Runs` on the queue card or open the inspector `Runs` tab. That panel now shows route details, provider messages, and the recorded run timeline for the selected post.
+- **I want route proof before the scheduler runs**: open `Runs` and use `Record readiness`. It stores the current launch truth and does not post.
 - **The month view looks stale after an update**: refresh once so the latest service worker shell replaces the old cached shell.
 - **A live API account will not validate**: check the matching secrets in `.env`. The UI will keep that route blocked until the required keys are present.
 - **Bluesky live posts fail**: verify `BLUESKY_HANDLE` and `BLUESKY_APP_PASSWORD`, and keep in mind that the current live connector supports text and image posts, not video.

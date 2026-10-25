@@ -59,7 +59,7 @@ The reasoning and current cost readout live in [PLATFORM-API-RESEARCH.md](PLATFO
 
 ## Current status
 
-- Launchable locally with `start.cmd`
+- Launch locally with `bash start.sh`. That sets `PORT=8032`, `APP_HOST=127.0.0.1`, and `APP_BASE_URL=http://127.0.0.1:8032`, then keeps the server listening. On Windows cmd, `start.cmd` sets the same values.
 - Testable with `node --test`
 - Container-ready with `Dockerfile`
 - Still able to fall back to a static preview when the backend is unavailable

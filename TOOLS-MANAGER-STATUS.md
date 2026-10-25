@@ -11,6 +11,7 @@ Owner session: `signal-stack-session`
 - Phase: `release-cockpit-demo-ready`
 - Install or build state: Local-first Node app + offline web studio + dry-run scheduler + explicit host binding
 - Last reviewed: `2026-10-25`
+- Launch command: `bash start.sh` sets `PORT=8032`, `APP_HOST=127.0.0.1`, and `APP_BASE_URL=http://127.0.0.1:8032`. Windows cmd still uses `start.cmd`.
 
 ## Shipped
 - Real creator pipeline: `idea -> draft -> approved -> scheduled -> posted`
@@ -27,7 +28,7 @@ Owner session: `signal-stack-session`
   - operators can see missing route, paused account, app-key, auth, or capability blockers without inferring them from scattered badges
 - New network-safety pass:
   - backend now binds to an explicit host instead of opening all interfaces by default
-  - `start.cmd` keeps the studio localhost-only for normal use
+  - `bash start.sh` keeps the studio localhost-only for normal use and is the documented launch command. `start.cmd` sets the same host and port on Windows cmd
   - new `start-tailscale.cmd` makes private tailnet access explicit when cross-device access is wanted
 - New launch-to-revenue proof:
   - `Midnight Signal Vol. 001 - Rain Grid` is now the narrow release-cockpit demo story
@@ -42,7 +43,7 @@ Owner session: `signal-stack-session`
 - Local JSON + local uploads are honest and launchable for a creator desktop workflow, but they are not yet hardened for multi-user hosted production.
 - Some platform rules remain conservative warnings rather than hard verified constraints, which is correct for honesty but still leaves product judgement in the loop.
 - Tailnet access is now intentional rather than accidental, but the wider Windows listener posture still depends on machine-level policy outside this repo.
-- Demo asset paths reference planned/generated media-pack artefacts; the demo is honest release-packaging proof, not proof that the final audio/video/still files have all been rendered.
+- Demo asset paths reference planned/generated media-pack artefacts. `media-bundle://` URLs stay on the seeded posts after load, and a media platform with no stored file cannot be marked Posted. The demo is honest release-packaging proof, not proof that the final audio/video/still files have all been rendered.
 
 ## Execution Pass
 - Chosen chunk: make connector readiness explicit in the delivery inspector instead of forcing operators to guess from badges and generic checks.

@@ -33,7 +33,7 @@ import {
   normalisePost,
   summariseChecks,
   validatePost
-} from '../shared/validation.js?v=20261025a';
+} from '../shared/validation.js?v=20261025c';
 const CACHE_KEY = 'signal-stack-cache-v4';
 const LOCAL_DRAFT_KEY = 'signal-stack-composer-draft-v1';
 const LAYOUT_PREFS_KEY = 'signal-stack-layout-v1';
@@ -2303,7 +2303,7 @@ async function resolveAlert(alertId) {
 
 async function runDueNow() {
   if (!state.backendReady) {
-    showBanner('Run Due Now needs the local backend. Start the app with start.cmd or npm.cmd start.');
+    showBanner('Run Due Now needs the local backend. Start the app with bash start.sh (start.cmd on Windows cmd).');
     return;
   }
 

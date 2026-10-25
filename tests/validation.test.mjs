@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import { createSeedState } from '../server/seed.mjs';
 import {
   buildPublishText,
   buildReadinessHistoryEntry,
@@ -107,4 +108,72 @@ test('buildPublishText uses target overrides and normalises hashtags', () => {
 
   assert.equal(buildPublishText(post, 'instagram'), 'IG override\n\n#reel #teaser');
   assert.equal(buildPublishText(post), 'Base copy\n\n#studio #launch');
+});
+
+test('keeps media-bundle seed assets after normalisation', () => {
+  const state = createSeedState({
+    defaultPublishMode: 'dry-run',
+    maxAutoRetries: 3,
+    retryBackoffMinutes: [15, 60, 240]
+  });
+  const posts = state.posts.map((post) => normalisePost(post, state.accounts));
+  const pack = posts.find((post) => post.title === 'Rain Grid asset pack assembly');
+  const hero = posts.find((post) => post.title === 'Midnight Signal Vol. 001 | Rain Grid');
+  const rain = posts.find((post) => post.title === 'Get the Rain Grid pack');
+
+  assert.equal(pack.assetUrls.image, 'media-bundle://midnight-signal/vol-001-rain-grid/stills/cover-square.png');
+  assert.equal(pack.assetUrls.audio, 'media-bundle://midnight-signal/vol-001-rain-grid/audio/preview-cut.wav');
+  assert.equal(hero.assetUrls.video, 'media-bundle://midnight-signal/vol-001-rain-grid/video/hero-video.mp4');
+  assert.equal(hero.assetUrls.thumbnail, 'media-bundle://midnight-signal/vol-001-rain-grid/stills/thumbnail-wide.png');
+  assert.equal(hero.assetUrls.audio, 'media-bundle://midnight-signal/vol-001-rain-grid/audio/full-track.wav');
+  assert.equal(rain.assetUrls.video, 'media-bundle://midnight-signal/vol-001-rain-grid/video/shorts-cutdown.mp4');
+  assert.equal(rain.assetUrls.thumbnail, 'media-bundle://midnight-signal/vol-001-rain-grid/stills/cover-square.png');
+  assert.equal(rain.assetUrls.audio, 'media-bundle://midnight-signal/vol-001-rain-grid/audio/preview-cut.wav');
+});
+
+test('keeps http asset urls and drops other schemes', () => {
+  const post = normalisePost({
+    assetUrls: {
+      image: 'javascript:alert(1)',
+      video: 'https://cdn.example.com/assets/main-drop.mp4',
+      thumbnail: 'file:///tmp/thumb.png',
+      audio: 'media-bundle://midnight-signal/vol-001-rain-grid/audio/preview-cut.wav'
+    }
+  }, []);
+
+  assert.equal(post.assetUrls.image, '');
+  assert.equal(post.assetUrls.video, 'https://cdn.example.com/assets/main-drop.mp4');
+  assert.equal(post.assetUrls.thumbnail, '');
+  assert.equal(post.assetUrls.audio, 'media-bundle://midnight-signal/vol-001-rain-grid/audio/preview-cut.wav');
+});
+
+test('blocks a media platform when the asset is only a remote url with an empty storage id', () => {
+  const account = normaliseAccount({
+    id: 'acc-ig',
+    platform: 'instagram',
+    label: 'IG Dry',
+    handle: '@ig',
+    mode: 'dry-run'
+  }, {});
+  const post = normalisePost({
+    title: 'Morning teaser frame set',
+    status: 'scheduled',
+    platforms: ['instagram'],
+    accountTargets: { instagram: 'acc-ig' },
+    platformTargets: {
+      instagram: { enabled: true, accountId: 'acc-ig', caption: '', hashtags: '' }
+    },
+    media: [{
+      name: 'teaser.jpg',
+      type: 'image/jpeg',
+      kind: 'image',
+      storageId: ''
+    }],
+    assetUrls: {
+      image: 'https://cdn.example.com/assets/teaser.jpg'
+    }
+  }, [account]);
+  const checks = validatePost(post, { accounts: [account], posts: [post], envStatus: {} });
+
+  assert.equal(checks.some((item) => item.level === 'blocked' && item.label === 'Instagram needs a stored file'), true);
 });

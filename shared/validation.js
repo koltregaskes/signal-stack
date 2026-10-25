@@ -206,10 +206,10 @@ export function validatePost(post, context = {}) {
     checks.push(warning('Audio reference only', 'Soundtrack or music references are stored, but these platforms still need an image or video asset to publish.'));
   }
 
-  if (!post.assetUrls?.image && !post.assetUrls?.video && media.some((item) => item.kind !== 'audio')) {
+  if (hasStoredPrimaryFile(post)) {
     checks.push(ready('Local assets attached', 'Stored uploads are available for exact size and duration checks.'));
-  } else if (post.assetUrls?.image || post.assetUrls?.video || post.assetUrls?.audio) {
-    checks.push(warning('Remote asset URLs', 'Remote asset slots are filled, but exact file-size validation is limited until local media is attached.'));
+  } else if (post.assetUrls?.image || post.assetUrls?.video || post.assetUrls?.audio || media.some((item) => item.kind !== 'audio')) {
+    checks.push(warning('Remote asset URLs', 'Remote asset slots are filled, but exact file-size validation is limited until a stored file is attached.'));
   }
 
   for (const platformKey of post.platforms) {
@@ -230,8 +230,11 @@ export function validatePost(post, context = {}) {
       message: routeReadiness.message
     });
 
-    if (platform.requiresMedia && mediaCount < 1) {
-      checks.push(blocked(`${platform.label} needs media`, 'Attach at least one image or video asset to publish cleanly.'));
+    if (platform.requiresMedia && !hasStoredPrimaryFile(post)) {
+      checks.push(blocked(
+        `${platform.label} needs a stored file`,
+        'Attach an image or video that is stored with this post. A remote URL with an empty storage id is not a stored file.'
+      ));
     }
 
     if (post.ratio && platform.recommendedRatios?.length && !platform.recommendedRatios.includes(post.ratio)) {
@@ -556,6 +559,15 @@ export function countPrimaryAssetSlots(post) {
   return mediaItems.length
     + Number(Boolean(assetUrls.image))
     + Number(Boolean(assetUrls.video));
+}
+
+function hasStoredPrimaryFile(post) {
+  const media = Array.isArray(post?.media) ? post.media : [];
+  return media.some((item) => {
+    const kind = item?.kind;
+    const storageId = typeof item?.storageId === 'string' ? item.storageId.trim() : '';
+    return Boolean(storageId) && (kind === 'image' || kind === 'video' || kind === 'gif');
+  });
 }
 
 export function normaliseHashtagString(value) {
@@ -905,7 +917,15 @@ function platformFieldCheck(isStrict, label, message) {
 
 function normaliseUrl(value) {
   const candidate = String(value || '').trim();
-  return /^https?:\/\//i.test(candidate) ? candidate : '';
+  if (/^https?:\/\//i.test(candidate)) {
+    return candidate;
+  }
+
+  if (/^media-bundle:\/\/\S+$/i.test(candidate)) {
+    return candidate;
+  }
+
+  return '';
 }
 
 function formatBytes(value) {

@@ -3,8 +3,12 @@
 ## Local launch
 
 1. Copy `.env.example` to `.env` if you want to prepare live connector secrets.
-2. Run `start.cmd`.
+2. Run `bash start.sh`.
 3. The app opens at `http://127.0.0.1:8032/`.
+
+`bash start.sh` is the launch command. It sets `PORT=8032`, `APP_HOST=127.0.0.1`, and `APP_BASE_URL=http://127.0.0.1:8032`, then starts the server and keeps it listening. Nothing else needs to be installed.
+
+On Windows cmd, `start.cmd` sets those same values and opens the browser.
 
 For private cross-device access over Tailscale, start it with your tailnet IP instead:
 

@@ -81,7 +81,7 @@ That lets the studio be opinionated without becoming brittle.
 
 ## Deployment shape
 
-- Local launch: `start.cmd`
+- Local launch: `bash start.sh` (Windows cmd: `start.cmd`)
 - Container launch: `docker build` + `docker run`
 - Managed host target: any Node-capable host that can expose the server and persist local or mounted storage
 

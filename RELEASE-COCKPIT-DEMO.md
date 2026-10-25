@@ -95,7 +95,7 @@ The item sits in `Scheduled`, but still uses dry-run. It demonstrates the releas
 
 ## Demo Script
 
-1. Start Signal Stack with `start.cmd`.
+1. Start Signal Stack with `bash start.sh` (`start.cmd` on Windows cmd).
 2. Open `http://127.0.0.1:8032/`.
 3. Use `Import Queue`.
 4. Select `demo/midnight-signal-release-cockpit.queue.json`.

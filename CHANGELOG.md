@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-25
+- Documented launch is `bash start.sh`, which sets `PORT`, `APP_HOST`, and `APP_BASE_URL` before starting the server. `start.cmd` remains the Windows cmd equivalent.
+- Seed `media-bundle://` asset URLs stay on the post after load, including the scheduled Rain Grid pack.
+- A media platform with no stored file stays blocked. A remote URL plus an empty storage id is not enough for dry-run to mark the post Posted.
+
 ## 2026-04-11
 - Added per-post publish history so scheduler runs now leave durable evidence on success, retry, failure, and validation-blocked delivery attempts.
 - Added a `Runs` inspector tab plus a queue-level `Review Runs` action so delivery evidence is visible without leaving the studio.

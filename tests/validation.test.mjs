@@ -177,3 +177,19 @@ test('blocks a media platform when the asset is only a remote url with an empty 
 
   assert.equal(checks.some((item) => item.level === 'blocked' && item.label === 'Instagram needs a stored file'), true);
 });
+
+test('drops blob preview urls and keeps the stored file id', () => {
+  const post = normalisePost({
+    title: 'Proof image drop',
+    media: [{
+      name: 'signal-stack-proof.png',
+      type: 'image/png',
+      kind: 'image',
+      storageId: '72cf2696-9b84-4bb5-8cc3-1543b53d2b6a.png',
+      previewUrl: 'blob:http://127.0.0.1:8032/826d9562-186e-42b5-926b-8bebf3c14c81'
+    }]
+  }, []);
+
+  assert.equal(post.media[0].storageId, '72cf2696-9b84-4bb5-8cc3-1543b53d2b6a.png');
+  assert.equal(post.media[0].previewUrl, '');
+});

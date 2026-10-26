@@ -36,7 +36,7 @@ It is built for the gap between text-first schedulers and the real work of plann
 
 ## Publishing modes
 
-- `Dry run`: fully usable now and safe for launch/demo work
+- `Dry run`: fully usable now. Delivery is simulated and does not call the platform.
 - `Live API`: configurable account-by-account once secrets are present
 - `Bluesky`: live posting is wired for text and image posts
 - `Instagram`, `Threads`, `TikTok`, `YouTube`, `Shorts`, `X`: connector scaffolding and validation are in place, but live delivery still depends on app credentials, OAuth, and platform approval
@@ -56,6 +56,14 @@ The reasoning and current cost readout live in [PLATFORM-API-RESEARCH.md](PLATFO
 - Official limits are treated as hard blockers where we have high confidence.
 - Conservative launch defaults are surfaced as warnings instead of hard stops.
 - That keeps the studio useful now without pretending every platform rule is perfectly static forever.
+
+## Local path
+
+Start with `bash start.sh` and open `http://127.0.0.1:8032/`. Attach a stored image or video, then set the title, schedule, content group, and pipeline status. Save the item and move it Idea, Draft, Approved, Scheduled. The queue, the week calendar, and the month calendar show that item on its scheduled day.
+
+A media platform with no stored file stays blocked and does not become Posted. A remote URL with an empty storage id is not a stored file. When the item is due, Run Due Now on a dry-run account records a simulated delivery and does not call the platform. Review Runs shows that entry. Export Queue writes the item, and Import Queue loads it back.
+
+Seeded `media-bundle://` references and example URLs are placeholders. They are not stored media.
 
 ## Current status
 

@@ -1,6 +1,6 @@
 # Tools Manager Status
 
-Updated: 2026-10-25
+Updated: 2026-10-26
 Tool: Signal Stack
 Slug: `signal-stack`
 Owner session: `signal-stack-session`
@@ -10,12 +10,12 @@ Owner session: `signal-stack-session`
 - Completion: `93%`
 - Phase: `release-cockpit-demo-ready`
 - Install or build state: Local-first Node app + offline web studio + dry-run scheduler + explicit host binding
-- Last reviewed: `2026-10-25`
+- Last reviewed: `2026-10-26`
 - Launch command: `bash start.sh` sets `PORT=8032`, `APP_HOST=127.0.0.1`, and `APP_BASE_URL=http://127.0.0.1:8032`. Windows cmd still uses `start.cmd`.
 
 ## Shipped
 - Real creator pipeline: `idea -> draft -> approved -> scheduled -> posted`
-- Week and month calendar views wired to the pipeline
+- Week and month calendar views wired to the pipeline. The month view shows every item on its scheduled day.
 - Structured platform targets, account routing, uploads, import/export, and offline shell
 - Dry-run scheduler with retries, alerts, activity log, and honest connector gating
 - New execution-history pass:
@@ -58,7 +58,8 @@ Owner session: `signal-stack-session`
 - `node --check server/connectors.mjs`
 - `node --check server/env.mjs`
 - `node --check server.mjs`
-- `node --test` (8 passing, including the readiness-history case)
+- `node --test` (14 passing, including stored-file, remote-url, seed asset, and blob-preview cases)
+- 2026-10-26 finish-line recheck on `http://127.0.0.1:8032/`: stored image upload, week and month calendars, blocked remote URL, dry-run simulated delivery, and export/import. Reloaded console errors: `0`.
 - Fresh-install seed now calls `persistStateLocked`, so a checkout without `.local/data/app-state.json` can start
 - Browser smoke on `http://127.0.0.1:8032/web/`: Record readiness on the seeded idea kept status `Idea` and wrote a dry-run route check with no platform call
 - Route checks:

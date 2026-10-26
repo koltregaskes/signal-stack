@@ -33,7 +33,7 @@ import {
   normalisePost,
   summariseChecks,
   validatePost
-} from '../shared/validation.js?v=20261025c';
+} from '../shared/validation.js?v=20261026b';
 const CACHE_KEY = 'signal-stack-cache-v4';
 const LOCAL_DRAFT_KEY = 'signal-stack-composer-draft-v1';
 const LAYOUT_PREFS_KEY = 'signal-stack-layout-v1';
@@ -1233,26 +1233,36 @@ function renderMediaList() {
 }
 
 function renderMediaPreview(item) {
-  if (item.kind === 'video' && item.previewUrl) {
+  const previewUrl = typeof item.previewUrl === 'string' ? item.previewUrl.trim() : '';
+
+  if (item.kind === 'video' && previewUrl) {
     return `
       <div class="media-item__preview">
-        <video src="${escapeHtml(item.previewUrl)}" muted playsinline preload="metadata"></video>
+        <video src="${escapeHtml(previewUrl)}" muted playsinline preload="metadata"></video>
       </div>
     `;
   }
 
-  if ((item.kind === 'image' || item.kind === 'gif') && item.previewUrl) {
+  if ((item.kind === 'image' || item.kind === 'gif') && previewUrl) {
     return `
       <div class="media-item__preview">
-        <img src="${escapeHtml(item.previewUrl)}" alt="${escapeHtml(item.name)} preview" />
+        <img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(item.name)} preview" />
+      </div>
+    `;
+  }
+
+  if (item.kind === 'audio') {
+    return `
+      <div class="media-item__preview media-item__preview--audio">
+        <span>Audio</span>
+        <strong>Soundtrack reference</strong>
       </div>
     `;
   }
 
   return `
-    <div class="media-item__preview media-item__preview--audio">
-      <span>Audio</span>
-      <strong>Soundtrack reference</strong>
+    <div class="media-item__preview">
+      <strong>${escapeHtml(item.name || 'Stored file')}</strong>
     </div>
   `;
 }
@@ -1834,9 +1844,8 @@ function renderMonthCalendar() {
         </header>
         <div class="day-column__cards">
           ${items.length
-            ? items.slice(0, 3).map((post) => renderCalendarCard(post, { compact: true })).join('')
+            ? items.map((post) => renderCalendarCard(post, { compact: true })).join('')
             : '<div class="calendar-empty">No items</div>'}
-          ${items.length > 3 ? `<div class="calendar-empty">+${items.length - 3} more</div>` : ''}
         </div>
       </section>
     `;

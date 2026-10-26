@@ -1,13 +1,13 @@
-const CACHE_NAME = 'signal-stack-shell-v11';
+const CACHE_NAME = 'signal-stack-shell-v13';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './styles.css?v=20261025a',
-  './app.js?v=20261025c',
+  './app.js?v=20261026b',
   './manifest.webmanifest?v=20260411b',
   '../shared/platforms.js?v=20260411a',
   '../shared/time.js?v=20260411a',
-  '../shared/validation.js?v=20261025c'
+  '../shared/validation.js?v=20261026b'
 ];
 
 self.addEventListener('install', (event) => {

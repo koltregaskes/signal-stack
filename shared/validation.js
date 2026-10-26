@@ -652,7 +652,7 @@ function normaliseMediaItem(media = {}) {
     height: Math.max(0, Number(media.height || 0)),
     durationSeconds: Math.max(0, Number(media.durationSeconds || 0)),
     storageId: typeof media.storageId === 'string' ? media.storageId : '',
-    previewUrl: typeof media.previewUrl === 'string' ? media.previewUrl : ''
+    previewUrl: durablePreviewUrl(media.previewUrl)
   };
 }
 
@@ -913,6 +913,15 @@ function normaliseTagString(value) {
 
 function platformFieldCheck(isStrict, label, message) {
   return isStrict ? blocked(label, message) : warning(label, message);
+}
+
+function durablePreviewUrl(value) {
+  const candidate = typeof value === 'string' ? value.trim() : '';
+  if (!candidate || candidate.startsWith('blob:')) {
+    return '';
+  }
+
+  return candidate;
 }
 
 function normaliseUrl(value) {
